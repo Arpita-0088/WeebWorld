@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeebWorld - Custom Anime T-Shirts</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            perspective: 1200px;
+        }
+
+        .hidden { display: none !important; }
+
+        /* Reusable Components */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        .section { padding: 5rem 0; perspective: 1000px; }
+        .section-title { text-align: center; font-size: 2.5rem; margin-bottom: 3rem; color: #1f2937; }
+        .gradient-bg { background: linear-gradient(135deg, #9333ea, #ec4899, #f97316); }
+        .gradient-text { background: linear-gradient(135deg, #9333ea, #ec4899); 
+                         background-clip: text;
+                         -webkit-text-fill-color: transparent; }
+        
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 2rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #9333ea, #ec4899);
+            color: white;
+            box-shadow:
+                0 4px 6px rgba(147, 51, 234, 0.25),
+                0 8px 15px rgba(147, 51, 234, 0.15),
+                inset 0 1px 1px rgba(255,255,255,0.2);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow:
+                0 8px 20px rgba(147, 51, 234, 0.35),
+                0 15px 35px rgba(147, 51, 234, 0.2),
+                inset 0 1px 1px rgba(255,255,255,0.3);
+        }
+        .btn-primary:active {
+            transform: translateY(1px) scale(0.98);
+            box-shadow:
+                0 2px 4px rgba(147, 51, 234, 0.3),
+                inset 0 2px 3px rgba(0,0,0,0.15);
+        }
+        .btn-outline {
+            background: transparent;
+            color: #9333ea;
+            border: 2px solid #9333ea;
+            box-shadow: 0 2px 8px rgba(147, 51, 234, 0.1);
+        }
+        .btn-outline:hover {
+            background: #9333ea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(147, 51, 234, 0.3);
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow:
+                0 4px 12px rgba(0,0,0,0.08),
+                0 8px 30px rgba(0,0,0,0.04),
+                0 1px 0 rgba(255,255,255,0.8) inset;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.5);
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { font-size: 1.5rem; font-weight: bold; }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { color: #333; text-decoration: none; transition: color 0.3s; }
+        .nav-links a:hover { color: #9333ea; }
+        .nav-actions { display: flex; gap: 1rem; }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            overflow-y: auto;
+        }
+        .modal.show { display: flex; align-items: center; justify-content: center; }
+        .modal-content {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow:
+                0 25px 60px rgba(0,0,0,0.3),
+                0 10px 20px rgba(0,0,0,0.1),
+                inset 0 1px 1px rgba(255,255,255,0.6);
+            border: 1px solid rgba(255,255,255,0.3);
+            transform: translateZ(50px);
+            animation: modalSlideIn 0.35s ease-out;
+        }
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateZ(50px) translateY(30px) scale(0.95); }
+            to   { opacity: 1; transform: translateZ(50px) translateY(0) scale(1); }
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .close-btn { background: none; border: none; font-size: 2rem; cursor: pointer; color: #6b7280; }
+        .close-btn:hover { color: #ef4444; }
+        
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #9333ea;
+            box-shadow:
+                inset 0 2px 4px rgba(0,0,0,0.04),
+                0 0 0 3px rgba(147, 51, 234, 0.15);
+        }
+        .toggle-form { text-align: center; margin-top: 1rem; color: #6b7280; }
+        .toggle-form a { color: #9333ea; cursor: pointer; font-weight: bold; }
+
+        /* Product Modal */
+        .product-modal .modal-content { max-width: 800px; }
+        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+        .product-image {
+            width: 100%;
+            height: 400px;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, #ddd6fe, #fbcfe8);
+            background-size: cover;
+            background-position: center;
+            box-shadow:
+                0 8px 25px rgba(0,0,0,0.15),
+                0 3px 8px rgba(0,0,0,0.1);
+            transition: transform 0.4s ease;
+        }
+        .product-image:hover {
+            transform: rotateY(-5deg) scale(1.02);
+        }
+        .stars { font-size: 1.5rem; color: #fbbf24; }
+        .price { font-size: 2rem; color: #9333ea; font-weight: bold; margin: 1rem 0; }
+        
+        .options { margin: 1.5rem 0; }
+        .option-label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
+        .size-options, .color-options { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+        .size-btn {
+            padding: 0.6rem 1.2rem;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+        .size-btn:hover, .size-btn.active { border-color: #9333ea; }
+        .size-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(147, 51, 234, 0.15);
+        }
+        .size-btn.active {
+            background: linear-gradient(135deg, #9333ea, #ec4899);
+            color: white;
+            box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
+        }
+        
+        .color-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow:
+                0 3px 6px rgba(0,0,0,0.1),
+                inset 0 1px 2px rgba(255,255,255,0.3);
+        }
+        .color-btn:hover {
+            transform: scale(1.15) translateY(-2px);
+            box-shadow:
+                0 6px 15px rgba(0,0,0,0.15),
+                inset 0 1px 2px rgba(255,255,255,0.4);
+        }
+        .color-btn.active {
+            border-color: #9333ea;
+            box-shadow:
+                0 0 0 3px rgba(147, 51, 234, 0.3),
+                0 4px 10px rgba(0,0,0,0.15);
+        }
+        .color-btn.active::after { content: '✓'; color: white; font-size: 1.2rem; }
+        
+        .qty-selector { display: flex; align-items: center; gap: 1rem; }
+        .qty-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .qty-btn:hover { border-color: #9333ea; color: #9333ea; }
+        .qty-value { font-size: 1.2rem; font-weight: bold; min-width: 40px; text-align: center; }
+        
+        .reviews { margin-top: 2rem; border-top: 2px solid #e5e7eb; padding-top: 2rem; }
+        .review {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            box-shadow:
+                0 2px 6px rgba(0,0,0,0.04),
+                inset 0 1px 1px rgba(255,255,255,0.8);
+            border: 1px solid rgba(0,0,0,0.04);
+            transition: transform 0.2s ease;
+        }
+        .review:hover {
+            transform: translateX(4px);
+        }
+        .review-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+        .reviewer { font-weight: bold; }
+        .review-date { color: #9ca3af; font-size: 0.85rem; }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, #9333ea, #ec4899, #f97316);
+            color: white;
+            padding: 6rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(ellipse at 30% 50%, rgba(255,255,255,0.1) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            text-shadow:
+                0 2px 4px rgba(0,0,0,0.2),
+                0 4px 12px rgba(0,0,0,0.15),
+                0 8px 30px rgba(0,0,0,0.1);
+            letter-spacing: -0.02em;
+        }
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.95;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+
+        /* Grid Layouts */
+        .grid { display: grid; gap: 2rem; }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+        .grid-4 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+
+        /* Cards */
+        .card {
+            padding: 2rem;
+            border-radius: 1rem;
+            transition: all 0.4s ease;
+            background: linear-gradient(145deg, #faf5ff, #fce7f3);
+            box-shadow:
+                0 4px 6px rgba(0,0,0,0.05),
+                0 10px 25px rgba(0,0,0,0.06),
+                inset 0 1px 1px rgba(255,255,255,0.8);
+            transform-style: preserve-3d;
+            transform: perspective(800px) rotateX(0deg) rotateY(0deg);
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+        .card:hover {
+            transform: perspective(800px) rotateX(-4deg) rotateY(4deg) translateY(-8px);
+            box-shadow:
+                0 15px 35px rgba(147, 51, 234, 0.12),
+                0 25px 55px rgba(0,0,0,0.08),
+                inset 0 1px 2px rgba(255,255,255,0.9);
+        }
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            filter: drop-shadow(0 3px 6px rgba(0,0,0,0.15));
+            transition: transform 0.3s ease;
+        }
+        .card:hover .card-icon {
+            transform: translateZ(20px) scale(1.15);
+        }
+        .card h3 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+        .card p { color: #6b7280; }
+
+        /* Collection */
+        .collection {
+            background: linear-gradient(to bottom, #faf5ff, white);
+        }
+
+        .collection-intro {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 3rem;
+        }
+
+        .collection-intro p {
+            font-size: 1.2rem;
+            color: #6b7280;
+        }
+
+        .collection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+            perspective: 1000px;
+        }
+
+        .collection-item {
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem;
+            transform-style: preserve-3d;
+            transition: all 0.4s ease;
+            box-shadow:
+                0 6px 15px rgba(0,0,0,0.1),
+                0 12px 30px rgba(0,0,0,0.06);
+        }
+        .collection-item:hover {
+            transform: perspective(800px) rotateX(-3deg) rotateY(5deg) translateY(-10px) scale(1.02);
+            box-shadow:
+                0 20px 40px rgba(147, 51, 234, 0.2),
+                0 30px 60px rgba(0,0,0,0.1),
+                -5px 5px 15px rgba(147, 51, 234, 0.08);
+        }
+
+        .collection-item-img {
+            background: linear-gradient(135deg, #ddd6fe, #fbcfe8);
+            aspect-ratio: 1;
+            border-radius: 1rem;
+            transition: transform 0.3s;
+        }
+        .anime1 {
+                background-image: url("C:/Users/ASUS/OneDrive/Pictures/Screenshots/anime1.jpg");
+                background-size: cover;
+                background-repeat: no-repeat;
+            }
+        .anime2 {
+                background-image: url("C:/Users/ASUS/OneDrive/Pictures/Screenshots/anime2.jpg");
+                background-size: cover;
+                background-repeat: no-repeat;
+            }
+        .anime3 {
+                background-image: url("C:/Users/ASUS/OneDrive/Pictures/Screenshots/anime3.jpg");
+                background-size: cover;
+                background-repeat: no-repeat;
+            }
+        .anime4 {
+                background-image: url("C:/Users/ASUS/OneDrive/Pictures/Screenshots/anime4.jpg");
+                background-size: cover;
+                background-repeat: no-repeat;
+            }
+        .anime5 {
+                background-image: url("C:/Users/ASUS/OneDrive/Pictures/Screenshots/anime5.jpg");
+                background-size: cover;
+                background-repeat: no-repeat;
+            } 
+        .anime6 {
+                background-image: url("C:/Users/ASUS/OneDrive/Pictures/Screenshots/anime6.jpg");
+                background-size: cover;
+                background-repeat: no-repeat;
+            }                    
+        .collection-item:hover .collection-item-img {
+            transform: scale(1.08);
+        }
+
+        .collection-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            padding: 1.5rem;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .collection-item:hover .collection-overlay {
+            opacity: 1;
+        }
+
+        .collection-btn {
+            background: linear-gradient(135deg, #9333ea, #ec4899);
+            color: white;
+            padding: 1.2rem 2.5rem;
+            border: none;
+            border-radius: 5rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+            box-shadow:
+                0 6px 15px rgba(147, 51, 234, 0.3),
+                0 10px 30px rgba(147, 51, 234, 0.15),
+                inset 0 1px 1px rgba(255,255,255,0.2);
+        }
+        .collection-btn:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow:
+                0 12px 30px rgba(147, 51, 234, 0.4),
+                0 20px 50px rgba(147, 51, 234, 0.2),
+                inset 0 1px 2px rgba(255,255,255,0.3);
+        }
+        .collection-btn:active {
+            transform: translateY(1px) scale(0.98);
+            box-shadow:
+                0 2px 6px rgba(147, 51, 234, 0.3),
+                inset 0 2px 4px rgba(0,0,0,0.15);
+        }       
+
+        /* Step Circle */
+        .step {
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .step:hover {
+            transform: translateY(-5px);
+        }
+        .step-icon {
+            background: linear-gradient(135deg, #9333ea, #ec4899);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 2rem;
+            box-shadow:
+                0 8px 20px rgba(147, 51, 234, 0.35),
+                0 4px 8px rgba(0,0,0,0.1),
+                inset 0 2px 4px rgba(255,255,255,0.25),
+                inset 0 -2px 4px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+        }
+        .step:hover .step-icon {
+            transform: scale(1.1);
+            box-shadow:
+                0 12px 30px rgba(147, 51, 234, 0.45),
+                0 6px 12px rgba(0,0,0,0.12),
+                inset 0 2px 4px rgba(255,255,255,0.3),
+                inset 0 -2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* Footer */
+        footer {
+            background: #111827;
+            color: white;
+            padding: 3rem 2rem;
+            box-shadow: 0 -8px 30px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
+        footer ul { list-style: none; }
+        footer a {
+            color: #9ca3af;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        footer a:hover {
+            color: #c084fc;
+            text-shadow: 0 0 8px rgba(192, 132, 252, 0.4);
+        }
+        .footer-bottom { text-align: center; padding-top: 2rem; border-top: 1px solid #374151; color: #9ca3af; }
+
+        /* Dark Mode */
+        #dark-toggle {
+    display: none;
+}
+.dark-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgb(106, 106, 243);
+    padding: 10px;
+    border-radius: 60%;
+    cursor: pointer;
+    z-index: 2000;
+    box-shadow:
+        0 4px 12px rgba(106, 106, 243, 0.4),
+        0 2px 4px rgba(0,0,0,0.15),
+        inset 0 1px 2px rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+}
+.dark-btn:hover {
+    transform: scale(1.1);
+    box-shadow:
+        0 6px 20px rgba(106, 106, 243, 0.5),
+        0 4px 8px rgba(0,0,0,0.2);
+}
+/* ---------- GLOBAL DARK MODE ---------- */
+#dark-toggle:checked ~ .page {
+    background: #190034;
+    color: #fefefc;
+}
+/* ---------- NAVBAR ---------- */
+#dark-toggle:checked ~ .page nav {
+    background: rgba(2, 6, 23, 0.92);
+    backdrop-filter: blur(12px);
+    box-shadow:
+        0 4px 12px rgba(0,0,0,0.4),
+        0 8px 30px rgba(0,0,0,0.2),
+        0 1px 0 rgba(255,255,255,0.05) inset;
+    color: #fefefc;
+}
+#dark-toggle:checked ~ .page .nav-links a {
+    color: #1599ae;
+}
+#dark-toggle:checked ~ .page .nav-links a:hover {
+    color: #e8e6ec;
+}
+/* ---------- SECTIONS ---------- */
+#dark-toggle:checked ~ .page section {
+    background: #0f172a;
+}
+#dark-toggle:checked ~ .page .section-title {
+    color: #f8f2f2;
+}    
+#dark-toggle:checked ~ .page section p {
+    color: #0e0e01;
+}
+/* ---------- HERO & CTA ---------- */
+#dark-toggle:checked ~ .page .cta {
+background: linear-gradient(135deg, #020617, #1e1b4b, #3c66c3);
+}
+#dark-toggle:checked ~ .page .hero {
+background: linear-gradient(to bottom, #2b0d2e, #6a1b5c); 
+}
+/* ---------- TEXT FIX ---------- */
+#dark-toggle:checked ~ .page .feature-card h3,
+#dark-toggle:checked ~ .page .feature-card p{
+    color: #000b10;
+}
+#dark-toggle:checked ~ .page .step h3,
+#dark-toggle:checked ~ .page .step p {
+    color: #eeeff0;
+}
+/*-----------About Us-----------*/
+#dark-toggle:checked ~ .page .about {
+    background: linear-gradient(180deg, #020617, #312e81, #574dc1);
+}
+/* ---------- FOOTER ---------- */
+#dark-toggle:checked ~ .page footer {
+    background: #000105;
+    color: #fefefc;
+}
+#dark-toggle:checked ~ .page footer,
+#dark-toggle:checked ~ .page footer a {
+    color: #e5e7eb;
+}
+    </style>
+</head>
+<body>
+    <input type="checkbox" id="dark-toggle">
+    <label for="dark-toggle" class="dark-btn">🌙</label>
+
+    <div class="page">
+        <!-- Navigation -->
+        <nav>
+            <div class="nav-container">
+                <div class="logo gradient-text">👕 WeebWorld</div>
+                <ul class="nav-links">
+                    <li><a href="#collection">Collection</a></li>
+                    <li><a href="#how">How It Works</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <button class="btn btn-outline" onclick="showLogin()">👤 Account</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Auth Modal -->
+        <div id="authModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="gradient-text" id="authTitle">Login</h2>
+                    <button class="close-btn" onclick="closeModal('authModal')">&times;</button>
+                </div>
+                
+                <div id="loginForm">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="loginEmail" placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" placeholder="Password">
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="handleLogin()">Login</button>
+                    <div class="toggle-form">
+                        Don't have an account? <a onclick="toggleAuth()">Sign Up</a>
+                    </div>
+                </div>
+
+                <div id="signupForm" class="hidden">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" id="signupName" placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="signupEmail" placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="signupPassword" placeholder="Password">
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="handleSignup()">Sign Up</button>
+                    <div class="toggle-form">
+                        Have an account? <a onclick="toggleAuth()">Login</a>
+                    </div>
+                </div>
+                <!-- Logout section -->
+                <div id="logoutSection" class="hidden" style="text-align:center;">
+                    <p id="welcomeUser"></p>
+                    <button class="btn btn-primary" onclick="logout()" style="width:100%;">
+                           Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Modal -->
+        <div id="productModal" class="modal product-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Product Details</h2>
+                    <button class="close-btn" onclick="closeModal('productModal')">&times;</button>
+                </div>
+                
+                <div class="product-grid">
+                    <div class="product-image" id="modalImg"></div>
+                    <div>
+                        <h2 id="modalName"></h2>
+                        <div class="stars" id="modalStars">★★★★★</div>
+                        <div style="color: #6b7280; font-size: 0.9rem;">(128 reviews)</div>
+                        <div class="price" id="modalPrice"></div>
+                        <p style="color: #6b7280; margin-bottom: 1.5rem;" id="modalDesc"></p>
+                        
+                        <div class="options">
+                            <label class="option-label">Size:</label>
+                            <div class="size-options" id="sizeOpts">
+                                <button class="size-btn active" onclick="selectOpt(this, 'size', 'XS')">XS</button>
+                                <button class="size-btn" onclick="selectOpt(this, 'size', 'S')">S</button>
+                                <button class="size-btn" onclick="selectOpt(this, 'size', 'M')">M</button>
+                                <button class="size-btn" onclick="selectOpt(this, 'size', 'L')">L</button>
+                                <button class="size-btn" onclick="selectOpt(this, 'size', 'XL')">XL</button>
+                                <button class="size-btn" onclick="selectOpt(this, 'size', 'XXL')">XXL</button>
+                            </div>
+
+                            <label class="option-label">Color:</label>
+                            <div class="color-options">
+                                <button class="color-btn active" style="background: #000;" onclick="selectOpt(this, 'color', 'Black')"></button>
+                                <button class="color-btn" style="background: #fff; border-color: #ccc;" onclick="selectOpt(this, 'color', 'White')"></button>
+                                <button class="color-btn" style="background: #1e3a8a;" onclick="selectOpt(this, 'color', 'Navy')"></button>
+                                <button class="color-btn" style="background: #991b1b;" onclick="selectOpt(this, 'color', 'Red')"></button>
+                                <button class="color-btn" style="background: #6b7280;" onclick="selectOpt(this, 'color', 'Gray')"></button>
+                            </div>
+
+                            <label class="option-label">Quantity:</label>
+                            <div class="qty-selector">
+                                <button class="qty-btn" onclick="changeQty(-1)">-</button>
+                                <span class="qty-value" id="qty">1</span>
+                                <button class="qty-btn" onclick="changeQty(1)">+</button>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" style="width: 100%;" onclick="addToCart()">Add to Cart 🛒</button>
+                    </div>
+                </div>
+
+                <div class="reviews">
+                    <h3>Customer Reviews</h3>
+                    <div class="review">
+                        <div class="review-header">
+                            <span class="reviewer">Alex Johnson</span>
+                            <span class="review-date">2 days ago</span>
+                        </div>
+                        <div class="stars">★★★★★</div>
+                        <p>Amazing quality! The print is vibrant and the fabric feels premium.</p>
+                    </div>
+                    <div class="review">
+                        <div class="review-header">
+                            <span class="reviewer">Sarah Chen</span>
+                            <span class="review-date">1 week ago</span>
+                        </div>
+                        <div class="stars">★★★★☆</div>
+                        <p>Great design and comfortable fit. Would recommend sizing up.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hero -->
+        <section class="hero">
+            <div class="container">
+                <h1>Wear Your Anime. Your Way.</h1>
+                <p>Custom unisex T-shirts inspired by iconic anime characters.</p>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title">Why Choose Us</h2>
+                <div class="grid grid-3">
+                    <div class="card">
+                        <div class="card-icon">🎨</div>
+                        <h3>Anime-Inspired Designs</h3>
+                        <p>From classics to trending characters</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">✨</div>
+                        <h3>Premium Quality</h3>
+                        <p>Soft, durable, and breathable</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🎯</div>
+                        <h3>Easy Customization</h3>
+                        <p>Choose design, color, size</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">💎</div>
+                        <h3>Long-Lasting Prints</h3>
+                        <p>Fade-resistant printing</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Collection -->
+        <section class="collection" id="collection">
+        <div class="container">
+            <div class="collection-intro">
+                <h2 class="section-title">Anime That Defines You</h2>
+                <p>Explore our curated collection of anime-inspired T-shirts or create your own design featuring your favorite characters and styles.</p>
+            </div>
+            
+            <div class="collection-grid">
+                <div class="collection-item">
+                    <div class="collection-item-img anime1"></div>
+                    <div class="collection-overlay">
+                        <h4>Anime Design 1</h4>
+                        <p>Custom Unisex Tee</p>
+                    </div>
+                </div>
+                <div class="collection-item">
+                    <div class="collection-item-img anime2"></div>
+                    <div class="collection-overlay">
+                        <h4>Anime Design 2</h4>
+                        <p>Custom Unisex Tee</p>
+                    </div>
+                </div>
+                <div class="collection-item">
+                    <div class="collection-item-img anime3"></div>
+                    <div class="collection-overlay">
+                        <h4>Anime Design 3</h4>
+                        <p>Custom Unisex Tee</p>
+                    </div>
+                </div>
+                <div class="collection-item">
+                    <div class="collection-item-img anime4"></div>
+                    <div class="collection-overlay">
+                        <h4>Anime Design 4</h4>
+                        <p>Custom Unisex Tee</p>
+                    </div>
+                </div>
+                <div class="collection-item">
+                    <div class="collection-item-img anime5"></div>
+                    <div class="collection-overlay">
+                        <h4>Anime Design 5</h4>
+                        <p>Custom Unisex Tee</p>
+                    </div>
+                </div>
+                <div class="collection-item">
+                    <div class="collection-item-img anime6"></div>
+                    <div class="collection-overlay">
+                        <h4>Anime Design 6</h4>
+                        <p>Custom Unisex Tee</p>
+                    </div>
+                </div>
+            </div>
+        
+              <button class="collection-btn" onclick="window.location.href='customize.html'">Customize Your Tee</button>
+            
+        </div>
+        </section>
+
+        <!-- How It Works -->
+        <section id="how" class="section">
+            <div class="container">
+                <h2 class="section-title">How It Works</h2>
+                <div class="grid grid-4">
+                    <div class="step">
+                        <div class="step-icon">✨</div>
+                        <h3>Choose Design</h3>
+                        <p>Pick from our collection</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon">❤️</div>
+                        <h3>Customize It</h3>
+                        <p>Select size and color</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon">✓</div>
+                        <h3>We Create It</h3>
+                        <p>Premium printing</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon">📦</div>
+                        <h3>Delivered</h3>
+                        <p>To your doorstep</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About -->
+        <section id="about" class="section" style="background: linear-gradient(to bottom, #faf5ff, #fce7f3);">
+            <div class="container">
+                <h2 class="section-title">About Us</h2>
+                <p style="max-width: 800px; margin: 0 auto; text-align: center; font-size: 1.2rem; color: #374151; line-height: 1.8;">
+                    We are a creative apparel brand dedicated to anime fans. Our mission is to turn powerful anime characters 
+                    into high-quality, unisex T-shirts that anyone can wear with confidence.
+                </p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <div class="footer-grid">
+                    <div>
+                        <h4>👕 WeebWorld</h4>
+                        <p style="color: #9ca3af; margin-top: 0.5rem;">Premium anime T-shirts for every fan</p>
+                    </div>
+                    <div>
+                        <h4>Shop</h4>
+                        <ul>
+                            <li><a href="#">Collection</a></li>
+                            <li><a href="#">New Arrivals</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Support</h4>
+                        <ul>
+                            <li><a href="#">FAQ</a></li>
+                            <li><a href="#">Shipping</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2024 WeebWorld. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // State
+        let cart = [], user = null, selected = null, opts = {size: 'XS', color: 'Black', qty: 1};
+
+        // Products
+        const products = [
+            {id: 1, name: "Naruto Design", price: 24.99, desc: "Iconic orange jumpsuit", rating: 5, img: "C:/Users/ASUS/OneDrive/Pictures/Screenshots/anime1.jpg"},
+            {id: 2, name: "Attack on Titan", price: 26.99, desc: "Survey Corps wings", rating: 5, img: "C:/Users/ASUS/OneDrive/Pictures/Screenshots/anime2.jpg"},
+            {id: 3, name: "One Piece", price: 25.99, desc: "Straw Hat Pirates", rating: 4, img: "C:/Users/ASUS/OneDrive/Pictures/Screenshots/anime3.jpg"},
+            {id: 4, name: "My Hero Academia", price: 23.99, desc: "Plus Ultra", rating: 5, img: "C:/Users/ASUS/OneDrive/Pictures/Screenshots/anime4.jpg"},
+            {id: 5, name: "Demon Slayer", price: 27.99, desc: "Water breathing", rating: 5, img: "C:/Users/ASUS/OneDrive/Pictures/Screenshots/anime5.jpg"},
+            {id: 6, name: "Death Note", price: 26.99, desc: "Iconic notebook", rating: 4, img: "C:/Users/ASUS/OneDrive/Pictures/Screenshots/anime6.jpg"}
+        ];
+
+        // Display products
+        document.getElementById('products').innerHTML = products.map(p => `
+            <div class="collection-item" onclick="showProduct(${p.id})">
+                <div class="collection-img" style="background-image: url('${p.img}')"></div>
+                <div class="collection-overlay">
+                    <h4>${p.name}</h4>
+                    <p>$${p.price.toFixed(2)}</p>
+                </div>
+            </div>
+        `).join('');
+
+        // Modals
+        function showLogin() { document.getElementById('authModal').classList.add('show'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+        function toggleAuth() {
+            document.getElementById('loginForm').classList.toggle('hidden');
+            document.getElementById('signupForm').classList.toggle('hidden');
+            document.getElementById('authTitle').textContent = document.getElementById('loginForm').classList.contains('hidden') ? 'Sign Up' : 'Login';
+        }
+
+        // Auth
+        function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPassword').value;
+            if (email && pass) {
+                user = {email, name: email.split('@')[0]};
+                document.querySelector('.btn-outline').textContent = `👤 ${user.name}`;
+                closeModal('authModal');
+                alert(`✅ Welcome, ${user.name}!`);
+            } else alert('⚠️ Fill all fields');
+        }
+
+        function handleSignup() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const pass = document.getElementById('signupPassword').value;
+            if (name && email && pass) {
+                user = {name, email};
+                document.querySelector('.btn-outline').textContent = `👤 ${user.name}`;
+                closeModal('authModal');
+                alert(`✅ Welcome, ${user.name}!`);
+            } else alert('⚠️ Fill all fields');
+        }
+
+        // Product
+        function showProduct(id) {
+            selected = products.find(p => p.id === id);
+            document.getElementById('modalImg').style.backgroundImage = `url('${selected.img}')`;
+            document.getElementById('modalName').textContent = selected.name;
+            document.getElementById('modalPrice').textContent = `$${selected.price.toFixed(2)}`;
+            document.getElementById('modalDesc').textContent = selected.desc;
+            document.getElementById('modalStars').textContent = '★'.repeat(selected.rating) + '☆'.repeat(5 - selected.rating);
+            opts = {size: 'XS', color: 'Black', qty: 1};
+            document.getElementById('qty').textContent = '1';
+            document.getElementById('productModal').classList.add('show');
+        }
+
+        function selectOpt(btn, type, val) {
+            const parent = type === 'size' ? 'sizeOpts' : btn.parentElement;
+            document.querySelectorAll(`#${parent} button, .color-btn`).forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            opts[type] = val;
+        }
+
+        function changeQty(delta) {
+            opts.qty = Math.max(1, opts.qty + delta);
+            document.getElementById('qty').textContent = opts.qty;
+        }
+
+        function addToCart() {
+            for (let i = 0; i < opts.qty; i++) cart.push({...selected, ...opts});
+            document.getElementById('cartCount').textContent = cart.length;
+            closeModal('productModal');
+            alert(`✅ ${opts.qty} x "${selected.name}" (${opts.size}, ${opts.color}) added!`);
+            opts.qty = 1;
+        }
+
+        // Cart
+        function showCart() {
+            if (!cart.length) return alert('Cart is empty!');
+            const items = cart.map((item, i) => `${i+1}. ${item.name} - ${item.size}, ${item.color} - $${item.price.toFixed(2)}`).join('\n');
+            const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
+            const total = subtotal + 5;
+            alert(`🛒 Cart:\n\n${items}\n\nSubtotal: $${subtotal.toFixed(2)}\nShipping: $5.00\nTotal: $${total.toFixed(2)}`);
+            if (confirm('Checkout?')) checkout();
+        }
+
+        function checkout() {
+            if (!user) return showLogin(), alert('⚠️ Login required!');
+            const total = cart.reduce((sum, item) => sum + item.price, 0) + 5;
+            alert(`🎉 Thanks ${user.name}!\n\nTotal: $${total.toFixed(2)}\nConfirmation sent to ${user.email}\nTracking in 24hrs!`);
+            cart = [];
+            document.getElementById('cartCount').textContent = '0';
+        }
+
+        // Close modal on outside click
+        window.onclick = e => { if (e.target.classList.contains('modal')) e.target.classList.remove('show'); }
+    </script>
+</body>
+</html>
