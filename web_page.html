@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WeebWorld — Anime Tees</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#04000a;--surface:#0d0018;--surface2:#180030;
+  --pink:#ff006e;--cyan:#00d4ff;--gold:#ffd000;
+  --white:#f0e8ff;--muted:#9985bb;
+  --glow-pink:0 0 20px rgba(255,0,110,.5),0 0 60px rgba(255,0,110,.2);
+  --glow-cyan:0 0 20px rgba(0,212,255,.5),0 0 60px rgba(0,212,255,.2);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit',sans-serif;background:var(--void);color:var(--white);overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(255,0,110,.025) 1px,transparent 1px);background-size:30px 30px;pointer-events:none;z-index:0}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:1000;padding:1rem 2rem;background:rgba(4,0,10,.85);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,0,110,.15)}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:'Bebas Neue',cursive;font-size:2rem;letter-spacing:3px;color:var(--white);text-shadow:var(--glow-pink);cursor:pointer;text-decoration:none}
+.logo span{color:var(--pink)}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-weight:600;font-size:.85rem;letter-spacing:1px;text-transform:uppercase;transition:color .3s}
+.nav-links a:hover{color:var(--cyan)}
+.nav-actions{display:flex;gap:1rem;align-items:center}
+
+/* BUTTONS */
+.btn{font-family:'Bebas Neue',cursive;letter-spacing:2px;padding:.7rem 1.8rem;border:none;cursor:pointer;font-size:1rem;transition:all .3s;position:relative;overflow:hidden}
+.btn::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,.1);transform:translateX(-100%);transition:transform .3s}
+.btn:hover::before{transform:translateX(0)}
+.btn-pink{background:var(--pink);color:white;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))}
+.btn-pink:hover{box-shadow:var(--glow-pink)}
+.btn-ghost{background:transparent;color:var(--pink);border:1px solid var(--pink);clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))}
+.btn-ghost:hover{background:rgba(255,0,110,.12);box-shadow:var(--glow-pink)}
+.btn-cyan{background:var(--cyan);color:var(--void);clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))}
+.btn-cyan:hover{box-shadow:var(--glow-cyan)}
+.cart-wrap{position:relative}
+.cart-badge{position:absolute;top:-8px;right:-8px;background:var(--pink);color:white;border-radius:50%;width:22px;height:22px;font-size:.7rem;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:var(--glow-pink)}
+
+/* HERO */
+.hero{min-height:100vh;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:
+  conic-gradient(from 0deg at 50% 50%,transparent 0deg,rgba(255,0,110,.03) 1deg,transparent 2deg,transparent 10deg,rgba(0,212,255,.025) 11deg,transparent 12deg,transparent 25deg,rgba(255,0,110,.025) 26deg,transparent 27deg,transparent 50deg,rgba(0,212,255,.03) 51deg,transparent 52deg),
+  radial-gradient(ellipse at 20% 80%,rgba(255,0,110,.18) 0%,transparent 45%),
+  radial-gradient(ellipse at 80% 20%,rgba(0,212,255,.14) 0%,transparent 45%),
+  radial-gradient(ellipse at 50% 50%,rgba(13,0,24,.85) 30%,var(--void) 80%)}
+.hero-content{position:relative;z-index:1;text-align:center;max-width:900px;padding:2rem}
+.hero-tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--cyan);border:1px solid rgba(0,212,255,.4);padding:.3rem 1rem;margin-bottom:1.5rem;animation:fadeDown .8s ease-out}
+.hero-title{font-family:'Bebas Neue',cursive;font-size:clamp(4rem,10vw,9rem);line-height:.9;letter-spacing:5px;margin-bottom:1.5rem;animation:fadeDown .8s .2s ease-out both}
+.line1{display:block;color:var(--white);text-shadow:0 0 40px rgba(255,0,110,.6),0 0 80px rgba(255,0,110,.3),3px 3px 0 rgba(255,0,110,.4)}
+.line2{display:block;color:var(--pink);text-shadow:var(--glow-pink)}
+.line3{display:block;color:transparent;-webkit-text-stroke:2px var(--cyan);text-shadow:var(--glow-cyan)}
+.hero-sub{font-size:1.05rem;color:var(--muted);max-width:500px;margin:0 auto 2.5rem;line-height:1.8;animation:fadeDown .8s .4s ease-out both}
+.hero-ctas{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:fadeDown .8s .6s ease-out both}
+.hero-dec{position:absolute;font-family:'Bebas Neue',cursive;opacity:.025;user-select:none;pointer-events:none;color:var(--pink)}
+.dec1{top:5%;left:2%;font-size:12rem;animation:float 6s ease-in-out infinite}
+.dec2{bottom:10%;right:3%;font-size:10rem;color:var(--cyan);animation:float 8s ease-in-out infinite reverse}
+.dec3{top:40%;left:1%;font-size:6rem;opacity:.04}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.5rem;color:var(--muted);font-size:.7rem;letter-spacing:2px;text-transform:uppercase;animation:bounce 2s infinite}
+.scroll-hint::after{content:'';width:1px;height:40px;background:linear-gradient(to bottom,var(--pink),transparent)}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-20px) rotate(5deg)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-10px)}}
+
+/* SECTIONS */
+.section{padding:6rem 2rem;position:relative}
+.container{max-width:1200px;margin:0 auto}
+.section-label{font-size:.72rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--pink);margin-bottom:.4rem}
+.section-title{font-family:'Bebas Neue',cursive;font-size:clamp(2.5rem,5vw,3.8rem);letter-spacing:3px;line-height:1}
+.section-title span{color:var(--pink)}
+
+/* COLLECTION */
+.collection-wrap{background:var(--surface);border-top:1px solid rgba(255,0,110,.1);border-bottom:1px solid rgba(255,0,110,.1)}
+.collection-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3rem;flex-wrap:wrap;gap:1rem}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:2rem}
+.product-card{cursor:pointer;position:relative;overflow:hidden;background:var(--surface2);border:1px solid rgba(255,0,110,.18);transition:all .4s ease;clip-path:polygon(0 0,calc(100% - 20px) 0,100% 20px,100% 100%,20px 100%,0 calc(100% - 20px))}
+.product-card:hover{border-color:var(--pink);box-shadow:var(--glow-pink),inset 0 0 30px rgba(255,0,110,.04);transform:translateY(-6px)}
+.product-card:nth-child(even):hover{border-color:var(--cyan);box-shadow:var(--glow-cyan)}
+.card-img{height:260px;position:relative;overflow:hidden}
+.card-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,var(--surface2) 100%)}
+.card-img svg{width:100%;height:100%}
+.card-badge{position:absolute;top:1rem;right:1rem;z-index:2;background:var(--pink);color:white;font-family:'Bebas Neue',cursive;font-size:.7rem;letter-spacing:2px;padding:.2rem .6rem;clip-path:polygon(0 0,calc(100% - 5px) 0,100% 5px,100% 100%,5px 100%,0 calc(100% - 5px))}
+.card-body{padding:1.2rem 1.5rem 1.5rem;position:relative;z-index:1}
+.card-name{font-family:'Bebas Neue',cursive;font-size:1.5rem;letter-spacing:2px;margin-bottom:.25rem}
+.card-desc{font-size:.82rem;color:var(--muted);margin-bottom:1rem;line-height:1.5}
+.card-footer{display:flex;justify-content:space-between;align-items:center}
+.card-price{font-family:'Bebas Neue',cursive;font-size:1.7rem;color:var(--pink);letter-spacing:1px}
+.card-stars{color:var(--gold);font-size:.8rem;margin-top:.1rem}
+.card-add-btn{background:rgba(255,0,110,.08);color:var(--pink);border:1px solid rgba(255,0,110,.3);padding:.45rem .9rem;font-family:'Bebas Neue',cursive;letter-spacing:1px;cursor:pointer;font-size:.85rem;transition:all .3s;clip-path:polygon(0 0,calc(100% - 5px) 0,100% 5px,100% 100%,5px 100%,0 calc(100% - 5px))}
+.card-add-btn:hover{background:var(--pink);color:white;box-shadow:var(--glow-pink)}
+
+/* HOW IT WORKS */
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;margin-top:3rem;position:relative}
+.steps-grid::before{content:'';position:absolute;top:35px;left:12.5%;width:75%;height:1px;background:linear-gradient(to right,var(--pink),var(--cyan),var(--pink));opacity:.4}
+.step{text-align:center;position:relative}
+.step-icon{width:70px;height:70px;margin:0 auto 1.2rem;background:var(--surface2);border:1px solid rgba(255,0,110,.25);display:flex;align-items:center;justify-content:center;font-size:1.7rem;position:relative;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));transition:box-shadow .3s}
+.step:hover .step-icon{box-shadow:var(--glow-pink)}
+.step-icon .num{position:absolute;top:-8px;right:-8px;width:22px;height:22px;background:var(--pink);color:white;font-size:.65rem;font-weight:900;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.step h3{font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:2px;margin-bottom:.4rem}
+.step p{font-size:.82rem;color:var(--muted);line-height:1.5}
+
+/* ABOUT */
+.about-wrap{background:var(--surface);border-top:1px solid rgba(0,212,255,.08);border-bottom:1px solid rgba(0,212,255,.08)}
+.about-inner{max-width:700px;margin:0 auto;text-align:center}
+.about-inner p{font-size:1.05rem;color:var(--muted);line-height:1.9}
+.about-stats{display:flex;justify-content:center;gap:3rem;margin-top:3rem;flex-wrap:wrap}
+.stat-num{font-family:'Bebas Neue',cursive;font-size:3rem;color:var(--pink);display:block;text-shadow:var(--glow-pink)}
+.stat-label{font-size:.72rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted)}
+
+/* FOOTER */
+footer{background:var(--void);border-top:1px solid rgba(255,0,110,.1);padding:3rem 2rem}
+.footer-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:3rem;margin-bottom:2rem}
+.footer-logo{font-family:'Bebas Neue',cursive;font-size:2rem;letter-spacing:3px;text-shadow:var(--glow-pink)}
+.footer-logo span{color:var(--pink)}
+.footer-tag{color:var(--muted);font-size:.85rem;margin-top:.3rem}
+.footer-col h5{font-family:'Bebas Neue',cursive;font-size:1rem;letter-spacing:2px;color:var(--cyan);margin-bottom:.8rem}
+.footer-col ul{list-style:none}
+.footer-col li{margin-bottom:.4rem}
+.footer-col a{color:var(--muted);text-decoration:none;font-size:.85rem;transition:color .2s}
+.footer-col a:hover{color:var(--pink)}
+.footer-bottom{max-width:1200px;margin:0 auto;border-top:1px solid rgba(255,255,255,.04);padding-top:1.5rem;text-align:center;color:var(--muted);font-size:.78rem}
+
+/* MODALS */
+.overlay{display:none;position:fixed;inset:0;background:rgba(4,0,10,.88);backdrop-filter:blur(10px);z-index:2000;align-items:center;justify-content:center;padding:1.5rem}
+.overlay.show{display:flex}
+.modal-box{background:var(--surface);border:1px solid rgba(255,0,110,.25);max-width:860px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--glow-pink),0 30px 80px rgba(0,0,0,.8);animation:slideUp .35s ease-out;clip-path:polygon(0 0,calc(100% - 24px) 0,100% 24px,100% 100%,24px 100%,0 calc(100% - 24px))}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:1.2rem 1.8rem;border-bottom:1px solid rgba(255,0,110,.1)}
+.modal-ttl{font-family:'Bebas Neue',cursive;font-size:1.4rem;letter-spacing:3px;color:var(--pink)}
+.close-x{background:none;border:1px solid rgba(255,0,110,.25);color:var(--muted);width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .3s}
+.close-x:hover{border-color:var(--pink);color:var(--pink)}
+
+/* PRODUCT MODAL */
+.pm-grid{display:grid;grid-template-columns:1fr 1fr}
+.pm-img{height:440px;overflow:hidden;position:relative}
+.pm-img svg{width:100%;height:100%}
+.pm-info{padding:2rem;display:flex;flex-direction:column;justify-content:space-between}
+.pm-name{font-family:'Bebas Neue',cursive;font-size:2.2rem;letter-spacing:3px;line-height:1;margin-bottom:.3rem}
+.pm-stars{color:var(--gold);margin-bottom:.3rem}
+.pm-price{font-family:'Bebas Neue',cursive;font-size:2.8rem;color:var(--pink);text-shadow:var(--glow-pink);letter-spacing:2px}
+.pm-desc{color:var(--muted);font-size:.88rem;margin:1rem 0;line-height:1.6}
+.opt-title{font-family:'Bebas Neue',cursive;font-size:.9rem;letter-spacing:2px;color:var(--muted);margin-bottom:.5rem}
+.size-opts{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.2rem}
+.sz{background:transparent;border:1px solid rgba(255,255,255,.12);color:var(--muted);padding:.35rem .75rem;cursor:pointer;font-family:'Outfit',sans-serif;font-weight:600;font-size:.82rem;transition:all .2s}
+.sz:hover,.sz.active{border-color:var(--pink);color:var(--pink);background:rgba(255,0,110,.08)}
+.color-opts{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.2rem}
+.cdot{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .2s}
+.cdot:hover,.cdot.active{border-color:var(--pink);transform:scale(1.2);box-shadow:var(--glow-pink)}
+.qty-row{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem}
+.qbtn{background:transparent;border:1px solid rgba(255,0,110,.3);color:var(--pink);width:34px;height:34px;font-size:1.2rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.qbtn:hover{background:rgba(255,0,110,.1)}
+.qval{font-family:'Bebas Neue',cursive;font-size:1.5rem;min-width:2rem;text-align:center}
+
+/* AUTH MODAL */
+.auth-box{max-width:420px;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px))}
+.auth-body{padding:1.8rem}
+.fld{margin-bottom:1.1rem}
+.fld label{display:block;font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:.35rem}
+.fld input{width:100%;background:var(--surface2);border:1px solid rgba(255,0,110,.18);color:var(--white);padding:.75rem 1rem;font-family:'Outfit',sans-serif;font-size:.92rem;outline:none;transition:border-color .3s}
+.fld input:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,0,110,.08)}
+.fld input::placeholder{color:var(--muted)}
+.toggle-auth{text-align:center;margin-top:.8rem;color:var(--muted);font-size:.87rem}
+.toggle-auth a{color:var(--cyan);cursor:pointer;font-weight:700}
+
+/* CART MODAL */
+.cart-item-row{display:flex;gap:1rem;align-items:center;padding:.9rem 0;border-bottom:1px solid rgba(255,0,110,.08)}
+.ci-icon{width:54px;height:54px;background:var(--surface2);border:1px solid rgba(255,0,110,.18);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+.ci-name{font-family:'Bebas Neue',cursive;letter-spacing:1px;font-size:1.05rem}
+.ci-meta{font-size:.78rem;color:var(--muted);margin-top:.1rem}
+.ci-price{font-family:'Bebas Neue',cursive;color:var(--pink);font-size:1.1rem}
+.ci-rm{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.72rem;text-transform:uppercase;letter-spacing:1px;margin-top:.2rem;transition:color .2s}
+.ci-rm:hover{color:var(--pink)}
+.summary-row{display:flex;justify-content:space-between;padding:.4rem 0;font-size:.9rem;color:var(--muted)}
+.summary-total{display:flex;justify-content:space-between;border-top:1px solid rgba(255,0,110,.18);margin-top:.5rem;padding-top:.8rem}
+.summary-total span:first-child{font-family:'Bebas Neue',cursive;letter-spacing:2px;font-size:1.1rem}
+.summary-total span:last-child{font-family:'Bebas Neue',cursive;font-size:1.4rem;color:var(--pink)}
+
+/* TOAST */
+#toast{position:fixed;bottom:2rem;right:2rem;background:var(--surface2);border:1px solid var(--pink);color:var(--white);padding:.9rem 1.5rem;z-index:9999;box-shadow:var(--glow-pink);clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));transform:translateY(100px);opacity:0;transition:all .4s cubic-bezier(.175,.885,.32,1.275);font-weight:600;font-size:.88rem}
+#toast.show{transform:translateY(0);opacity:1}
+
+.hidden{display:none!important}
+/* Anime palettes */
+.ab1{background:linear-gradient(135deg,#0d001a,#3d0060 50%,#ff006e18)}
+.ab2{background:linear-gradient(135deg,#00101a,#002040 50%,#00d4ff18)}
+.ab3{background:linear-gradient(135deg,#0d1000,#1a2d00 50%,#7aff0018)}
+.ab4{background:linear-gradient(135deg,#1a0d00,#3d2000 50%,#ff880018)}
+.ab5{background:linear-gradient(135deg,#0a001a,#1a003d 50%,#aa00ff18)}
+.ab6{background:linear-gradient(135deg,#1a0000,#3d0000 50%,#ff222218)}
+
+@media(max-width:768px){
+  .nav-links{display:none}
+  .pm-grid{grid-template-columns:1fr}
+  .pm-img{height:240px}
+  .steps-grid{grid-template-columns:repeat(2,1fr)}
+  .steps-grid::before{display:none}
+  .footer-inner{grid-template-columns:1fr;gap:2rem}
+  .about-stats{gap:2rem}
+}
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="logo" href="#">WEEB<span>WORLD</span></a>
+    <ul class="nav-links">
+      <li><a href="#collection">Collection</a></li>
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn btn-ghost" id="loginBtn" onclick="showAuth()">LOGIN</button>
+      <div class="cart-wrap">
+        <button class="btn btn-pink" onclick="showCart()">🛒 CART</button>
+        <span class="cart-badge" id="cartCount">0</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-dec dec1">ア</div>
+  <div class="hero-dec dec2">ニ</div>
+  <div class="hero-dec dec3">メ</div>
+  <div class="hero-content">
+    <div class="hero-tag">✦ Premium Anime Apparel ✦</div>
+    <h1 class="hero-title">
+      <span class="line1">WEAR YOUR</span>
+      <span class="line2">ANIME</span>
+      <span class="line3">PRIDE</span>
+    </h1>
+    <p class="hero-sub">Custom anime T-shirts crafted for true fans. Choose your series, pick your style, and wear the art you love.</p>
+    <div class="hero-ctas">
+      <button class="btn btn-pink" onclick="document.getElementById('collection').scrollIntoView({behavior:'smooth'})">SHOP COLLECTION</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">HOW IT WORKS</button>
+    </div>
+  </div>
+  <div class="scroll-hint">Scroll</div>
+</section>
+
+<!-- COLLECTION -->
+<section class="section collection-wrap" id="collection">
+  <div class="container">
+    <div class="collection-header">
+      <div>
+        <div class="section-label">✦ Our Designs</div>
+        <h2 class="section-title">THE <span>COLLECTION</span></h2>
+      </div>
+      <a href="customize.html" class="btn btn-ghost">BROWSE ALL →</a>
+    </div>
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how" style="background:var(--void)">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:1rem">
+      <div class="section-label">✦ The Process</div>
+      <h2 class="section-title">HOW IT <span>WORKS</span></h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step"><div class="step-icon">✨<span class="num">1</span></div><h3>Choose Design</h3><p>Pick from our growing collection of iconic anime artwork</p></div>
+      <div class="step"><div class="step-icon">🎨<span class="num">2</span></div><h3>Customize It</h3><p>Select your size, color, and quantity preferences</p></div>
+      <div class="step"><div class="step-icon">⚡<span class="num">3</span></div><h3>We Print It</h3><p>High-quality DTG printing on premium cotton fabric</p></div>
+      <div class="step"><div class="step-icon">📦<span class="num">4</span></div><h3>Delivered</h3><p>Fast shipping straight to your doorstep</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section about-wrap" id="about">
+  <div class="container">
+    <div class="about-inner">
+      <div class="section-label" style="text-align:center">✦ Our Story</div>
+      <h2 class="section-title" style="text-align:center;margin-bottom:1.5rem">ABOUT <span>US</span></h2>
+      <p>We are a creative apparel brand built by anime fans, for anime fans. Our mission is to turn iconic anime moments into wearable art — premium unisex T-shirts that let you carry your favourite series everywhere you go.</p>
+      <div class="about-stats">
+        <div><span class="stat-num">50+</span><span class="stat-label">Designs</span></div>
+        <div><span class="stat-num">2K+</span><span class="stat-label">Happy Fans</span></div>
+        <div><span class="stat-num">100%</span><span class="stat-label">Premium Cotton</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">WEEB<span>WORLD</span></div>
+      <div class="footer-tag">Premium anime T-shirts for every fan</div>
+    </div>
+    <div class="footer-col"><h5>Shop</h5><ul><li><a href="customize.html">Collection</a></li><li><a href="customize.html">New Arrivals</a></li><li><a href="cart.html">Cart</a></li></ul></div>
+    <div class="footer-col"><h5>Support</h5><ul><li><a href="#">FAQ</a></li><li><a href="shipping.html">Shipping</a></li><li><a href="#">Returns</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">© 2025 WeebWorld. Made with ❤️ for anime fans.</div>
+</footer>
+
+<!-- AUTH MODAL -->
+<div class="overlay" id="authModal">
+  <div class="modal-box auth-box">
+    <div class="modal-head">
+      <span class="modal-ttl" id="authTitle">LOGIN</span>
+      <button class="close-x" onclick="closeModal('authModal')">✕</button>
+    </div>
+    <div class="auth-body">
+      <div id="loginForm">
+        <div class="fld"><label>Email</label><input type="email" id="loginEmail" placeholder="yourname@email.com"></div>
+        <div class="fld"><label>Password</label><input type="password" id="loginPass" placeholder="••••••••"></div>
+        <button class="btn btn-pink" style="width:100%;margin-top:.5rem" onclick="handleLogin()">SIGN IN</button>
+        <div class="toggle-auth">No account? <a onclick="toggleAuth()">Sign Up</a></div>
+      </div>
+      <div id="signupForm" class="hidden">
+        <div class="fld"><label>Name</label><input type="text" id="signupName" placeholder="Your name"></div>
+        <div class="fld"><label>Email</label><input type="email" id="signupEmail" placeholder="yourname@email.com"></div>
+        <div class="fld"><label>Password</label><input type="password" id="signupPass" placeholder="••••••••"></div>
+        <button class="btn btn-pink" style="width:100%;margin-top:.5rem" onclick="handleSignup()">CREATE ACCOUNT</button>
+        <div class="toggle-auth">Have an account? <a onclick="toggleAuth()">Login</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="overlay" id="productModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span class="modal-ttl">PRODUCT DETAILS</span>
+      <button class="close-x" onclick="closeModal('productModal')">✕</button>
+    </div>
+    <div class="pm-grid">
+      <div class="pm-img" id="pmImg"></div>
+      <div class="pm-info">
+        <div>
+          <div class="pm-name" id="pmName">—</div>
+          <div class="pm-stars" id="pmStars">★★★★★</div>
+          <div class="pm-price" id="pmPrice">$0.00</div>
+          <div class="pm-desc" id="pmDesc">—</div>
+          <div class="opt-title">SIZE</div>
+          <div class="size-opts" id="sizeOpts">
+            <button class="sz active" onclick="selOpt(this,'size','XS')">XS</button>
+            <button class="sz" onclick="selOpt(this,'size','S')">S</button>
+            <button class="sz" onclick="selOpt(this,'size','M')">M</button>
+            <button class="sz" onclick="selOpt(this,'size','L')">L</button>
+            <button class="sz" onclick="selOpt(this,'size','XL')">XL</button>
+            <button class="sz" onclick="selOpt(this,'size','XXL')">XXL</button>
+          </div>
+          <div class="opt-title">COLOR</div>
+          <div class="color-opts">
+            <div class="cdot active" style="background:#111" onclick="selOpt(this,'color','Black')" title="Black"></div>
+            <div class="cdot" style="background:#f0e8ff;border:1px solid #333" onclick="selOpt(this,'color','White')" title="White"></div>
+            <div class="cdot" style="background:#1a1a3e" onclick="selOpt(this,'color','Navy')" title="Navy"></div>
+            <div class="cdot" style="background:#3d0000" onclick="selOpt(this,'color','Red')" title="Red"></div>
+          </div>
+          <div class="opt-title">QUANTITY</div>
+          <div class="qty-row">
+            <button class="qbtn" onclick="changeQty(-1)">−</button>
+            <span class="qval" id="qty">1</span>
+            <button class="qbtn" onclick="changeQty(1)">+</button>
+          </div>
+        </div>
+        <button class="btn btn-pink" style="width:100%" onclick="addToCart()">ADD TO CART</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CART MODAL -->
+<div class="overlay" id="cartModal">
+  <div class="modal-box" style="max-width:560px;clip-path:polygon(0 0,calc(100% - 20px) 0,100% 20px,100% 100%,20px 100%,0 calc(100% - 20px))">
+    <div class="modal-head">
+      <span class="modal-ttl">YOUR CART</span>
+      <button class="close-x" onclick="closeModal('cartModal')">✕</button>
+    </div>
+    <div style="padding:1.5rem">
+      <div id="cartItems"></div>
+      <div id="cartSummary" class="hidden" style="margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,0,110,.12)">
+        <div class="summary-row"><span>Subtotal</span><span id="cSub">$0.00</span></div>
+        <div class="summary-row"><span>Shipping</span><span>$5.00</span></div>
+        <div class="summary-total" style="margin-top:.8rem">
+          <span>TOTAL</span><span id="cTotal">$0.00</span>
+        </div>
+        <div style="display:flex;gap:1rem;margin-top:1.5rem">
+          <a href="cart.html" class="btn btn-ghost" style="flex:1;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center">VIEW CART</a>
+          <button class="btn btn-cyan" style="flex:1" onclick="checkout()">CHECKOUT →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const PRODUCTS=[
+  {id:1,name:"Naruto",price:24.99,desc:"Wear the spirit of the Hidden Leaf. Bold orange jumpsuit energy, reimagined for streetwear.",rating:5,bg:'ab4',kanji:'火',col:'#ff8800'},
+  {id:2,name:"Attack on Titan",price:26.99,desc:"Survey Corps wings across your chest. Stand against the titans.",rating:5,bg:'ab2',kanji:'翼',col:'#00d4ff'},
+  {id:3,name:"One Piece",price:25.99,desc:"Sail with the Straw Hats. For future pirate kings everywhere.",rating:4,bg:'ab3',kanji:'海',col:'#00ff88'},
+  {id:4,name:"My Hero Academia",price:23.99,desc:"Plus Ultra printed in every thread. Unleash your quirk in style.",rating:5,bg:'ab1',kanji:'個',col:'#ff006e'},
+  {id:5,name:"Demon Slayer",price:27.99,desc:"Water breathing forms visualized. The softest tee, the sharpest art.",rating:5,bg:'ab5',kanji:'水',col:'#aa00ff'},
+  {id:6,name:"Death Note",price:26.99,desc:"Carry the weight of the Death Note. Minimal design, maximum impact.",rating:4,bg:'ab6',kanji:'死',col:'#ff2222'},
+];
+
+let cart=JSON.parse(localStorage.getItem('ww_cart')||'[]');
+let user=JSON.parse(localStorage.getItem('ww_user')||'null');
+let sel=null,opts={size:'XS',color:'Black',qty:1};
+
+function cardSVG(p){
+  return`<svg viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="rg${p.id}" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="${p.col}" stop-opacity=".3"/><stop offset="100%" stop-color="${p.col}" stop-opacity="0"/></radialGradient></defs><circle cx="150" cy="130" r="110" fill="url(#rg${p.id})"/><text x="150" y="175" text-anchor="middle" font-size="150" font-family="serif" fill="${p.col}" opacity=".08">${p.kanji}</text><g transform="translate(78,55)" fill="${p.col}" opacity=".55"><path d="M0 32 L32 0 L52 16 C76 6 76 6 96 16 L116 0 L148 32 L116 50 L116 140 L32 140 L32 50Z"/></g><text x="150" y="230" text-anchor="middle" font-size="9" font-family="sans-serif" fill="${p.col}" opacity=".35" letter-spacing="4">${p.name.toUpperCase()}</text></svg>`;
+}
+
+function modalSVG(p){
+  return`<svg viewBox="0 0 400 440" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%"><defs><radialGradient id="mg${p.id}" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="${p.col}" stop-opacity=".35"/><stop offset="100%" stop-color="${p.col}" stop-opacity="0"/></radialGradient></defs><circle cx="200" cy="220" r="180" fill="url(#mg${p.id})"/><text x="200" y="300" text-anchor="middle" font-size="240" font-family="serif" fill="${p.col}" opacity=".07">${p.kanji}</text><g transform="translate(90,70)" fill="${p.col}" opacity=".65"><path d="M0 50 L50 0 L80 25 C120 8 120 8 160 25 L195 0 L220 50 L190 80 L190 240 L50 240 L50 80Z"/></g></svg>`;
+}
+
+function renderProducts(){
+  document.getElementById('productsGrid').innerHTML=PRODUCTS.map(p=>`
+    <div class="product-card" onclick="showProduct(${p.id})">
+      <div class="card-img ${p.bg}">${cardSVG(p)}<div class="card-badge">ANIME</div></div>
+      <div class="card-body">
+        <div class="card-name">${p.name}</div>
+        <div class="card-desc">${p.desc}</div>
+        <div class="card-footer">
+          <div><div class="card-price">$${p.price.toFixed(2)}</div><div class="card-stars">${'★'.repeat(p.rating)}${'☆'.repeat(5-p.rating)}</div></div>
+          <button class="card-add-btn" onclick="event.stopPropagation();quickAdd(${p.id})">+ ADD</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function showProduct(id){
+  sel=PRODUCTS.find(p=>p.id===id);
+  opts={size:'XS',color:'Black',qty:1};
+  const panel=document.getElementById('pmImg');
+  panel.className=`pm-img ${sel.bg}`;
+  panel.innerHTML=modalSVG(sel);
+  document.getElementById('pmName').textContent=sel.name;
+  document.getElementById('pmStars').textContent='★'.repeat(sel.rating)+'☆'.repeat(5-sel.rating);
+  document.getElementById('pmPrice').textContent=`$${sel.price.toFixed(2)}`;
+  document.getElementById('pmDesc').textContent=sel.desc;
+  document.getElementById('qty').textContent='1';
+  document.querySelectorAll('.sz').forEach((b,i)=>b.classList.toggle('active',i===0));
+  document.querySelectorAll('.cdot').forEach((b,i)=>b.classList.toggle('active',i===0));
+  document.getElementById('productModal').classList.add('show');
+}
+
+function quickAdd(id){
+  const p=PRODUCTS.find(x=>x.id===id);
+  cart.push({...p,size:'M',color:'Black',qty:1});
+  saveCart();toast(`✓ ${p.name} added to cart!`);
+}
+
+function selOpt(btn,type,val){
+  document.querySelectorAll(type==='size'?'.sz':'.cdot').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');opts[type]=val;
+}
+
+function changeQty(d){opts.qty=Math.max(1,opts.qty+d);document.getElementById('qty').textContent=opts.qty}
+
+function addToCart(){
+  if(!sel)return;
+  cart.push({...sel,...opts});
+  saveCart();closeModal('productModal');
+  toast(`✓ ${opts.qty}× ${sel.name} (${opts.size}, ${opts.color}) added!`);
+}
+
+function showCart(){renderCartModal();document.getElementById('cartModal').classList.add('show')}
+
+function renderCartModal(){
+  const ci=document.getElementById('cartItems'),cs=document.getElementById('cartSummary');
+  if(!cart.length){
+    ci.innerHTML=`<div style="text-align:center;padding:3rem;color:var(--muted)"><div style="font-size:3rem;margin-bottom:.8rem">🛒</div><div style="font-family:'Bebas Neue',cursive;font-size:1.5rem;letter-spacing:3px">YOUR CART IS EMPTY</div><p style="font-size:.85rem;margin-top:.4rem">Add some anime tees to get started!</p></div>`;
+    cs.classList.add('hidden');return;
+  }
+  const grp={};
+  cart.forEach(item=>{const k=`${item.id}-${item.size}-${item.color}`;grp[k]?grp[k].qty++:(grp[k]={...item,qty:1})});
+  ci.innerHTML=Object.values(grp).map(item=>`
+    <div class="cart-item-row">
+      <div class="ci-icon">👕</div>
+      <div style="flex:1"><div class="ci-name">${item.name}</div><div class="ci-meta">${item.size} · ${item.color} · ×${item.qty}</div></div>
+      <div style="text-align:right"><div class="ci-price">$${(item.price*item.qty).toFixed(2)}</div><button class="ci-rm" onclick="removeCart('${item.id}-${item.size}-${item.color}')">Remove</button></div>
+    </div>`).join('');
+  const sub=cart.reduce((s,i)=>s+i.price,0);
+  document.getElementById('cSub').textContent=`$${sub.toFixed(2)}`;
+  document.getElementById('cTotal').textContent=`$${(sub+5).toFixed(2)}`;
+  cs.classList.remove('hidden');
+}
+
+function removeCart(key){
+  const[id,size,color]=key.split('-');
+  cart=cart.filter(i=>!(i.id==id&&i.size===size&&i.color===color));
+  saveCart();renderCartModal();
+}
+
+function checkout(){
+  if(!user){closeModal('cartModal');showAuth();toast('⚠ Please login to checkout');return}
+  window.location.href='cart.html';
+}
+
+function showAuth(){document.getElementById('authModal').classList.add('show')}
+
+function toggleAuth(){
+  document.getElementById('loginForm').classList.toggle('hidden');
+  document.getElementById('signupForm').classList.toggle('hidden');
+  document.getElementById('authTitle').textContent=document.getElementById('loginForm').classList.contains('hidden')?'SIGN UP':'LOGIN';
+}
+
+function handleLogin(){
+  const e=document.getElementById('loginEmail').value,p=document.getElementById('loginPass').value;
+  if(!e||!p)return toast('⚠ Fill all fields');
+  user={email:e,name:e.split('@')[0]};
+  localStorage.setItem('ww_user',JSON.stringify(user));
+  document.getElementById('loginBtn').textContent=`👤 ${user.name.toUpperCase()}`;
+  closeModal('authModal');toast(`✓ Welcome back, ${user.name}!`);
+}
+
+function handleSignup(){
+  const n=document.getElementById('signupName').value,e=document.getElementById('signupEmail').value,p=document.getElementById('signupPass').value;
+  if(!n||!e||!p)return toast('⚠ Fill all fields');
+  user={name:n,email:e};
+  localStorage.setItem('ww_user',JSON.stringify(user));
+  document.getElementById('loginBtn').textContent=`👤 ${n.toUpperCase()}`;
+  closeModal('authModal');toast(`✓ Welcome to WeebWorld, ${n}!`);
+}
+
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+window.onclick=e=>{if(e.target.classList.contains('overlay'))e.target.classList.remove('show')};
+function saveCart(){localStorage.setItem('ww_cart',JSON.stringify(cart));document.getElementById('cartCount').textContent=cart.length}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500)}
+
+renderProducts();
+document.getElementById('cartCount').textContent=cart.length;
+if(user)document.getElementById('loginBtn').textContent=`👤 ${user.name.toUpperCase()}`;
+</script>
+</body>
+</html>

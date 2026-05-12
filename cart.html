@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cart — WeebWorld</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--void:#04000a;--surface:#0d0018;--surface2:#180030;--pink:#ff006e;--cyan:#00d4ff;--gold:#ffd000;--white:#f0e8ff;--muted:#9985bb;--glow-pink:0 0 20px rgba(255,0,110,.5),0 0 60px rgba(255,0,110,.2);--glow-cyan:0 0 20px rgba(0,212,255,.5),0 0 60px rgba(0,212,255,.2)}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit',sans-serif;background:var(--void);color:var(--white);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(255,0,110,.025) 1px,transparent 1px);background-size:30px 30px;pointer-events:none;z-index:0}
+nav{position:sticky;top:0;z-index:100;padding:1rem 2rem;background:rgba(4,0,10,.85);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,0,110,.15)}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:'Bebas Neue',cursive;font-size:1.8rem;letter-spacing:3px;color:var(--white);text-decoration:none;text-shadow:var(--glow-pink)}
+.logo span{color:var(--pink)}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-weight:600;font-size:.82rem;letter-spacing:1px;text-transform:uppercase;transition:color .3s}
+.nav-links a:hover{color:var(--cyan)}
+.btn{font-family:'Bebas Neue',cursive;letter-spacing:2px;padding:.65rem 1.6rem;border:none;cursor:pointer;font-size:.95rem;transition:all .3s;position:relative;overflow:hidden}
+.btn::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,.08);transform:translateX(-100%);transition:transform .3s}
+.btn:hover::before{transform:translateX(0)}
+.btn-pink{background:var(--pink);color:white;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))}
+.btn-pink:hover{box-shadow:var(--glow-pink)}
+.btn-ghost{background:transparent;color:var(--pink);border:1px solid var(--pink);clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))}
+.btn-ghost:hover{background:rgba(255,0,110,.1);box-shadow:var(--glow-pink)}
+.btn-cyan{background:var(--cyan);color:var(--void);clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))}
+.btn-cyan:hover{box-shadow:var(--glow-cyan)}
+
+/* PAGE */
+.page{max-width:1200px;margin:0 auto;padding:3rem 2rem;position:relative;z-index:1}
+.page-header{margin-bottom:2.5rem}
+.page-label{font-size:.72rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--pink);margin-bottom:.3rem}
+.page-title{font-family:'Bebas Neue',cursive;font-size:clamp(2.5rem,5vw,4rem);letter-spacing:3px;line-height:1}
+.page-title span{color:var(--pink)}
+
+/* LAYOUT */
+.cart-layout{display:grid;grid-template-columns:1fr 360px;gap:2rem;align-items:start}
+
+/* EMPTY STATE */
+.empty-state{background:var(--surface);border:1px solid rgba(255,0,110,.15);padding:5rem 2rem;text-align:center;clip-path:polygon(0 0,calc(100% - 20px) 0,100% 20px,100% 100%,20px 100%,0 calc(100% - 20px))}
+.empty-icon{font-size:4rem;margin-bottom:1rem;opacity:.5}
+.empty-title{font-family:'Bebas Neue',cursive;font-size:2rem;letter-spacing:3px;margin-bottom:.5rem}
+.empty-sub{color:var(--muted);font-size:.9rem;margin-bottom:2rem}
+
+/* CART ITEMS */
+.cart-item{display:flex;gap:1.5rem;align-items:center;padding:1.5rem;background:var(--surface);border:1px solid rgba(255,0,110,.12);margin-bottom:1rem;transition:all .3s;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px))}
+.cart-item:hover{border-color:rgba(255,0,110,.3);box-shadow:0 0 20px rgba(255,0,110,.06)}
+.ci-thumb{width:90px;height:90px;flex-shrink:0;overflow:hidden}
+.ci-thumb svg{width:100%;height:100%}
+.ci-info{flex:1}
+.ci-name{font-family:'Bebas Neue',cursive;font-size:1.3rem;letter-spacing:2px;margin-bottom:.2rem}
+.ci-desc{font-size:.82rem;color:var(--muted);margin-bottom:.4rem}
+.ci-tags{display:flex;gap:.5rem;flex-wrap:wrap}
+.ci-tag{font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--pink);border:1px solid rgba(255,0,110,.3);padding:.15rem .5rem}
+.ci-right{text-align:right;flex-shrink:0}
+.ci-price{font-family:'Bebas Neue',cursive;font-size:1.6rem;color:var(--pink)}
+.ci-each{font-size:.72rem;color:var(--muted);margin-bottom:.6rem}
+.ci-qty{display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem;justify-content:flex-end}
+.qbtn{background:transparent;border:1px solid rgba(255,0,110,.25);color:var(--pink);width:28px;height:28px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.qbtn:hover{background:rgba(255,0,110,.1)}
+.qnum{font-family:'Bebas Neue',cursive;font-size:1.1rem;min-width:1.5rem;text-align:center}
+.rm-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.72rem;letter-spacing:1px;text-transform:uppercase;transition:color .2s}
+.rm-btn:hover{color:#ff4444}
+
+/* ORDER SUMMARY */
+.summary-panel{background:var(--surface);border:1px solid rgba(255,0,110,.15);clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));position:sticky;top:90px}
+.summary-head{padding:1.2rem 1.5rem;border-bottom:1px solid rgba(255,0,110,.1);font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:3px;color:var(--pink)}
+.summary-body{padding:1.5rem}
+.s-row{display:flex;justify-content:space-between;padding:.5rem 0;font-size:.88rem;color:var(--muted)}
+.s-divider{border:none;border-top:1px solid rgba(255,0,110,.12);margin:.8rem 0}
+.s-total{display:flex;justify-content:space-between;padding:.4rem 0}
+.s-total span:first-child{font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:2px}
+.s-total span:last-child{font-family:'Bebas Neue',cursive;font-size:1.5rem;color:var(--pink);text-shadow:var(--glow-pink)}
+.coupon-row{display:flex;gap:.5rem;margin:1rem 0}
+.coupon-input{flex:1;background:var(--surface2);border:1px solid rgba(255,0,110,.18);color:var(--white);padding:.6rem .8rem;font-family:'Outfit',sans-serif;font-size:.82rem;outline:none;transition:border-color .3s}
+.coupon-input:focus{border-color:var(--pink)}
+.coupon-input::placeholder{color:var(--muted)}
+.shipping-note{font-size:.75rem;color:var(--muted);text-align:center;margin-top:.8rem;line-height:1.5}
+.shipping-note span{color:var(--cyan)}
+
+/* TOAST */
+#toast{position:fixed;bottom:2rem;right:2rem;background:var(--surface2);border:1px solid var(--pink);color:var(--white);padding:.9rem 1.5rem;z-index:9999;box-shadow:var(--glow-pink);clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));transform:translateY(100px);opacity:0;transition:all .4s cubic-bezier(.175,.885,.32,1.275);font-weight:600;font-size:.88rem}
+#toast.show{transform:translateY(0);opacity:1}
+.hidden{display:none!important}
+
+/* ANIME BG PALETTES */
+.ab1{background:linear-gradient(135deg,#0d001a,#3d0060 60%,#ff006e10)}
+.ab2{background:linear-gradient(135deg,#00101a,#002040 60%,#00d4ff10)}
+.ab3{background:linear-gradient(135deg,#0d1000,#1a2d00 60%,#7aff0010)}
+.ab4{background:linear-gradient(135deg,#1a0d00,#3d2000 60%,#ff880010)}
+.ab5{background:linear-gradient(135deg,#0a001a,#1a003d 60%,#aa00ff10)}
+.ab6{background:linear-gradient(135deg,#1a0000,#3d0000 60%,#ff222210)}
+
+@media(max-width:768px){
+  .nav-links{display:none}
+  .cart-layout{grid-template-columns:1fr}
+  .summary-panel{position:static}
+  .cart-item{flex-direction:column;text-align:center}
+  .ci-tags{justify-content:center}
+  .ci-right{text-align:center}
+  .ci-qty{justify-content:center}
+}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a class="logo" href="web_page.html">WEEB<span>WORLD</span></a>
+    <ul class="nav-links">
+      <li><a href="customize.html">Collection</a></li>
+      <li><a href="web_page.html#how">How It Works</a></li>
+      <li><a href="web_page.html#about">About</a></li>
+    </ul>
+    <a href="customize.html" class="btn btn-ghost">← CONTINUE SHOPPING</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <div class="page-label">✦ Your Order</div>
+    <h1 class="page-title">SHOPPING <span>CART</span></h1>
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div id="emptyState">
+    <div class="empty-state">
+      <div class="empty-icon">🛒</div>
+      <div class="empty-title">YOUR CART IS EMPTY</div>
+      <p class="empty-sub">Looks like you haven't added any anime tees yet.</p>
+      <a href="customize.html" class="btn btn-pink">EXPLORE COLLECTION</a>
+    </div>
+  </div>
+
+  <!-- CART CONTENT -->
+  <div id="cartContent" class="hidden">
+    <div class="cart-layout">
+      <div>
+        <div id="cartItemsList"></div>
+      </div>
+      <aside>
+        <div class="summary-panel">
+          <div class="summary-head">ORDER SUMMARY</div>
+          <div class="summary-body">
+            <div class="s-row"><span>Subtotal</span><span id="sSubtotal">$0.00</span></div>
+            <div class="s-row"><span>Shipping</span><span id="sShipping">$5.00</span></div>
+            <div class="coupon-row">
+              <input class="coupon-input" placeholder="Coupon code..." id="couponInput">
+              <button class="btn btn-ghost" style="font-size:.75rem;padding:.6rem 1rem" onclick="applyCoupon()">APPLY</button>
+            </div>
+            <hr class="s-divider">
+            <div class="s-total"><span>TOTAL</span><span id="sTotal">$0.00</span></div>
+            <div style="margin-top:1.5rem;display:flex;flex-direction:column;gap:.8rem">
+              <button class="btn btn-cyan" style="width:100%;font-size:1.05rem" onclick="checkout()">PROCEED TO CHECKOUT</button>
+              <a href="customize.html" class="btn btn-ghost" style="width:100%;text-align:center;text-decoration:none;display:block">CONTINUE SHOPPING</a>
+            </div>
+            <p class="shipping-note">🔒 Secure checkout · <span>Free shipping</span> on orders over $60</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<script>
+const PRODUCTS=[
+  {id:1,name:"Naruto",price:24.99,desc:"Iconic orange jumpsuit energy",rating:5,bg:'ab4',kanji:'火',col:'#ff8800'},
+  {id:2,name:"Attack on Titan",price:26.99,desc:"Survey Corps wings design",rating:5,bg:'ab2',kanji:'翼',col:'#00d4ff'},
+  {id:3,name:"One Piece",price:25.99,desc:"Straw Hat Pirates crew",rating:4,bg:'ab3',kanji:'海',col:'#00ff88'},
+  {id:4,name:"My Hero Academia",price:23.99,desc:"Plus Ultra premium tee",rating:5,bg:'ab1',kanji:'個',col:'#ff006e'},
+  {id:5,name:"Demon Slayer",price:27.99,desc:"Water breathing forms art",rating:5,bg:'ab5',kanji:'水',col:'#aa00ff'},
+  {id:6,name:"Death Note",price:26.99,desc:"Iconic notebook design",rating:4,bg:'ab6',kanji:'死',col:'#ff2222'},
+];
+
+function thumbSVG(p){
+  return`<svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg" class="${p.bg}" style="display:block"><defs><radialGradient id="tg${p.id}" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="${p.col}" stop-opacity=".3"/><stop offset="100%" stop-color="${p.col}" stop-opacity="0"/></radialGradient></defs><rect width="90" height="90" fill="url(#tg${p.id})"/><text x="45" y="60" text-anchor="middle" font-size="52" font-family="serif" fill="${p.col}" opacity=".15">${p.kanji}</text><g transform="translate(22,14)" fill="${p.col}" opacity=".6"><path d="M0 12 L12 0 L19 6 C28 2 28 2 36 6 L43 0 L46 12 L37 19 L37 55 L9 55 L9 19Z"/></g></svg>`;
+}
+
+let cart=JSON.parse(localStorage.getItem('ww_cart')||'[]');
+let user=JSON.parse(localStorage.getItem('ww_user')||'null');
+let discount=0;
+
+function getProductInfo(id){return PRODUCTS.find(p=>p.id===id)||{name:'Anime Tee',desc:'Custom design',bg:'ab1',kanji:'ア',col:'#ff006e'}}
+
+function displayCart(){
+  if(!cart.length){
+    document.getElementById('emptyState').classList.remove('hidden');
+    document.getElementById('cartContent').classList.add('hidden');
+    return;
+  }
+  document.getElementById('emptyState').classList.add('hidden');
+  document.getElementById('cartContent').classList.remove('hidden');
+  renderItems();
+}
+
+function renderItems(){
+  const grp={};
+  cart.forEach(item=>{
+    const k=`${item.id}-${item.size}-${item.color}`;
+    grp[k]?grp[k].qty++:(grp[k]={...item,qty:1});
+  });
+  const p=Object.values(grp);
+  const list=document.getElementById('cartItemsList');
+  list.innerHTML=p.map(item=>{
+    const info=getProductInfo(item.id);
+    return`<div class="cart-item" id="ci-${item.id}-${item.size}-${item.color}">
+      <div class="ci-thumb">${thumbSVG(info)}</div>
+      <div class="ci-info">
+        <div class="ci-name">${item.name}</div>
+        <div class="ci-desc">${info.desc}</div>
+        <div class="ci-tags">
+          <span class="ci-tag">Size: ${item.size}</span>
+          <span class="ci-tag">Color: ${item.color}</span>
+        </div>
+      </div>
+      <div class="ci-right">
+        <div class="ci-price">$${(item.price*item.qty).toFixed(2)}</div>
+        <div class="ci-each">$${item.price.toFixed(2)} each</div>
+        <div class="ci-qty">
+          <button class="qbtn" onclick="changeQty('${item.id}','${item.size}','${item.color}',-1)">−</button>
+          <span class="qnum">${item.qty}</span>
+          <button class="qbtn" onclick="changeQty('${item.id}','${item.size}','${item.color}',1)">+</button>
+        </div>
+        <button class="rm-btn" onclick="removeItem('${item.id}','${item.size}','${item.color}')">✕ Remove</button>
+      </div>
+    </div>`;
+  }).join('');
+  updateSummary();
+}
+
+function changeQty(id,size,color,delta){
+  const key=`${id}-${size}-${color}`;
+  const count=cart.filter(i=>i.id==id&&i.size===size&&i.color===color).length;
+  if(count+delta<=0){removeItem(id,size,color);return}
+  if(delta>0){
+    const sample=cart.find(i=>i.id==id&&i.size===size&&i.color===color);
+    cart.push({...sample});
+  }else{
+    const idx=cart.findIndex(i=>i.id==id&&i.size===size&&i.color===color);
+    if(idx>-1)cart.splice(idx,1);
+  }
+  saveCart();renderItems();
+}
+
+function removeItem(id,size,color){
+  cart=cart.filter(i=>!(i.id==id&&i.size===size&&i.color===color));
+  saveCart();
+  if(!cart.length)displayCart();else renderItems();
+  toast('Item removed from cart');
+}
+
+function updateSummary(){
+  const sub=cart.reduce((s,i)=>s+i.price,0);
+  const discounted=sub*(1-discount);
+  const shipping=discounted>=60?0:5;
+  document.getElementById('sSubtotal').textContent=`$${discounted.toFixed(2)}`;
+  document.getElementById('sShipping').textContent=shipping===0?'FREE':'$'+shipping.toFixed(2);
+  document.getElementById('sTotal').textContent=`$${(discounted+shipping).toFixed(2)}`;
+}
+
+function applyCoupon(){
+  const code=document.getElementById('couponInput').value.trim().toUpperCase();
+  if(code==='WEEB10'){discount=.1;toast('✓ 10% discount applied!');updateSummary()}
+  else if(code==='ANIME20'){discount=.2;toast('✓ 20% discount applied!');updateSummary()}
+  else toast('⚠ Invalid coupon code');
+}
+
+function checkout(){
+  if(!user){toast('⚠ Please login to checkout');setTimeout(()=>{window.location.href='web_page.html'},1500);return}
+  localStorage.setItem('ww_cart',JSON.stringify(cart));
+  window.location.href='shipping.html';
+}
+
+function saveCart(){localStorage.setItem('ww_cart',JSON.stringify(cart))}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500)}
+
+displayCart();
+</script>
+</body>
+</html>

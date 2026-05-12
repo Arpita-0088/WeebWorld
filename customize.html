@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collection — WeebWorld</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--void:#04000a;--surface:#0d0018;--surface2:#180030;--pink:#ff006e;--cyan:#00d4ff;--gold:#ffd000;--white:#f0e8ff;--muted:#9985bb;--glow-pink:0 0 20px rgba(255,0,110,.5),0 0 60px rgba(255,0,110,.2);--glow-cyan:0 0 20px rgba(0,212,255,.5),0 0 60px rgba(0,212,255,.2)}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit',sans-serif;background:var(--void);color:var(--white);overflow-x:hidden;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(255,0,110,.025) 1px,transparent 1px);background-size:30px 30px;pointer-events:none;z-index:0}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:1000;padding:1rem 2rem;background:rgba(4,0,10,.88);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,0,110,.15)}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:'Bebas Neue',cursive;font-size:1.9rem;letter-spacing:3px;color:var(--white);text-decoration:none;text-shadow:var(--glow-pink)}
+.logo span{color:var(--pink)}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-weight:600;font-size:.82rem;letter-spacing:1px;text-transform:uppercase;transition:color .3s}
+.nav-links a:hover,.nav-links a.active{color:var(--cyan)}
+.nav-actions{display:flex;gap:1rem;align-items:center}
+
+/* BUTTONS */
+.btn{font-family:'Bebas Neue',cursive;letter-spacing:2px;padding:.65rem 1.6rem;border:none;cursor:pointer;font-size:.95rem;transition:all .3s;position:relative;overflow:hidden;display:inline-block;text-align:center}
+.btn::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,.08);transform:translateX(-100%);transition:transform .3s}
+.btn:hover::before{transform:translateX(0)}
+.btn-pink{background:var(--pink);color:white;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))}
+.btn-pink:hover{box-shadow:var(--glow-pink)}
+.btn-ghost{background:transparent;color:var(--pink);border:1px solid var(--pink);clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))}
+.btn-ghost:hover{background:rgba(255,0,110,.1);box-shadow:var(--glow-pink)}
+.btn-cyan{background:var(--cyan);color:var(--void);clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))}
+.btn-cyan:hover{box-shadow:var(--glow-cyan)}
+.cart-wrap{position:relative}
+.cart-badge{position:absolute;top:-8px;right:-8px;background:var(--pink);color:white;border-radius:50%;width:22px;height:22px;font-size:.7rem;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:var(--glow-pink)}
+
+/* PAGE HEADER */
+.page-hero{padding:4rem 2rem 3rem;text-align:center;position:relative;z-index:1;background:radial-gradient(ellipse at 50% 0%,rgba(255,0,110,.12) 0%,transparent 60%)}
+.page-label{font-size:.72rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--cyan);margin-bottom:.4rem}
+.page-title{font-family:'Bebas Neue',cursive;font-size:clamp(3rem,7vw,5.5rem);letter-spacing:4px;line-height:.95;margin-bottom:1rem}
+.page-title span{color:var(--pink)}
+.page-sub{color:var(--muted);font-size:1rem;max-width:500px;margin:0 auto 2rem;line-height:1.7}
+
+/* SEARCH */
+.search-bar{max-width:600px;margin:0 auto;display:flex;gap:.75rem}
+.search-input{flex:1;background:var(--surface);border:1px solid rgba(255,0,110,.2);color:var(--white);padding:.85rem 1.2rem;font-family:'Outfit',sans-serif;font-size:.95rem;outline:none;transition:all .3s;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))}
+.search-input:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,0,110,.08)}
+.search-input::placeholder{color:var(--muted)}
+
+/* MAIN */
+main{max-width:1200px;margin:0 auto;padding:2rem 2rem 5rem;position:relative;z-index:1}
+
+/* BACK BTN */
+.back-strip{margin-bottom:1.5rem;display:none}
+.back-strip.show{display:flex;align-items:center;gap:1rem}
+.back-strip .crumb{font-size:.8rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.back-strip .crumb span{color:var(--pink)}
+
+/* FILTER TABS */
+.filter-bar{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:2.5rem;align-items:center}
+.filter-tab{background:transparent;border:1px solid rgba(255,255,255,.08);color:var(--muted);padding:.4rem 1.1rem;font-family:'Bebas Neue',cursive;font-size:.85rem;letter-spacing:1px;cursor:pointer;transition:all .3s;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px))}
+.filter-tab:hover,.filter-tab.active{border-color:var(--pink);color:var(--pink);background:rgba(255,0,110,.08)}
+.filter-count{font-size:.7rem;background:rgba(255,0,110,.15);color:var(--pink);padding:.1rem .4rem;border-radius:2px;margin-left:.3rem}
+
+/* SERIES GRID (home view) */
+.series-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.5rem}
+.series-card{cursor:pointer;background:var(--surface);border:1px solid rgba(255,0,110,.12);padding:2rem 1rem;text-align:center;transition:all .35s;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));position:relative;overflow:hidden}
+.series-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,var(--sc-col,rgba(255,0,110,.06)) 0%,transparent 70%);opacity:0;transition:opacity .4s}
+.series-card:hover::before{opacity:1}
+.series-card:hover{border-color:var(--pink);transform:translateY(-6px);box-shadow:0 12px 40px rgba(255,0,110,.12)}
+.sc-kanji{font-size:4rem;font-family:serif;margin-bottom:.8rem;line-height:1;filter:drop-shadow(0 0 12px var(--sc-col,rgba(255,0,110,.4)))}
+.sc-name{font-family:'Bebas Neue',cursive;font-size:1.15rem;letter-spacing:2px;margin-bottom:.3rem}
+.sc-count{font-size:.75rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.sc-badge{position:absolute;top:.7rem;right:.7rem;background:var(--pink);color:white;font-family:'Bebas Neue',cursive;font-size:.6rem;letter-spacing:1px;padding:.15rem .45rem;clip-path:polygon(0 0,calc(100% - 4px) 0,100% 4px,100% 100%,4px 100%,0 calc(100% - 4px))}
+
+/* PRODUCTS GRID */
+.products-grid{display:none;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem}
+.products-grid.show{display:grid}
+.product-card{cursor:pointer;background:var(--surface);border:1px solid rgba(255,0,110,.12);transition:all .35s;clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px));overflow:hidden}
+.product-card:hover{border-color:var(--pink);box-shadow:var(--glow-pink),inset 0 0 30px rgba(255,0,110,.03);transform:translateY(-5px)}
+.pc-img{height:240px;position:relative}
+.pc-img svg{width:100%;height:100%}
+.pc-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,var(--surface) 100%)}
+.pc-badge{position:absolute;top:.8rem;left:.8rem;z-index:2;background:var(--pink);color:white;font-family:'Bebas Neue',cursive;font-size:.65rem;letter-spacing:2px;padding:.15rem .6rem;clip-path:polygon(0 0,calc(100% - 4px) 0,100% 4px,100% 100%,4px 100%,0 calc(100% - 4px))}
+.pc-wish{position:absolute;top:.8rem;right:.8rem;z-index:2;background:rgba(4,0,10,.6);border:1px solid rgba(255,0,110,.2);color:var(--muted);width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.95rem;transition:all .2s}
+.pc-wish:hover,.pc-wish.liked{color:var(--pink);border-color:var(--pink);background:rgba(255,0,110,.1)}
+.pc-body{padding:1rem 1.2rem 1.2rem;position:relative;z-index:1}
+.pc-name{font-family:'Bebas Neue',cursive;font-size:1.35rem;letter-spacing:2px;margin-bottom:.15rem}
+.pc-desc{font-size:.8rem;color:var(--muted);margin-bottom:.8rem;line-height:1.4}
+.pc-footer{display:flex;justify-content:space-between;align-items:center}
+.pc-price{font-family:'Bebas Neue',cursive;font-size:1.5rem;color:var(--pink)}
+.pc-stars{color:var(--gold);font-size:.75rem}
+.pc-add{background:rgba(255,0,110,.08);color:var(--pink);border:1px solid rgba(255,0,110,.25);padding:.4rem .85rem;font-family:'Bebas Neue',cursive;letter-spacing:1px;cursor:pointer;font-size:.8rem;transition:all .3s;clip-path:polygon(0 0,calc(100% - 4px) 0,100% 4px,100% 100%,4px 100%,0 calc(100% - 4px))}
+.pc-add:hover{background:var(--pink);color:white;box-shadow:var(--glow-pink)}
+
+/* PRODUCT MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(4,0,10,.9);backdrop-filter:blur(12px);z-index:2000;align-items:center;justify-content:center;padding:1.5rem}
+.overlay.show{display:flex}
+.modal-box{background:var(--surface);border:1px solid rgba(255,0,110,.25);max-width:860px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--glow-pink),0 30px 80px rgba(0,0,0,.8);animation:slideUp .35s ease-out;clip-path:polygon(0 0,calc(100% - 24px) 0,100% 24px,100% 100%,24px 100%,0 calc(100% - 24px))}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:1.2rem 1.8rem;border-bottom:1px solid rgba(255,0,110,.1)}
+.modal-ttl{font-family:'Bebas Neue',cursive;font-size:1.3rem;letter-spacing:3px;color:var(--pink)}
+.close-x{background:none;border:1px solid rgba(255,0,110,.2);color:var(--muted);width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.9rem;transition:all .3s}
+.close-x:hover{border-color:var(--pink);color:var(--pink)}
+.pm-grid{display:grid;grid-template-columns:1fr 1fr}
+.pm-img-wrap{overflow:hidden;position:relative;min-height:380px}
+.pm-img-wrap svg{width:100%;height:100%;display:block}
+.pm-info{padding:2rem;display:flex;flex-direction:column;gap:1rem}
+.pm-name{font-family:'Bebas Neue',cursive;font-size:2rem;letter-spacing:3px;line-height:1}
+.pm-stars{color:var(--gold);font-size:.9rem}
+.pm-rating-count{color:var(--muted);font-size:.78rem;margin-left:.4rem}
+.pm-price{font-family:'Bebas Neue',cursive;font-size:2.5rem;color:var(--pink);text-shadow:var(--glow-pink)}
+.pm-desc{color:var(--muted);font-size:.85rem;line-height:1.6}
+.opt-label{font-family:'Bebas Neue',cursive;font-size:.85rem;letter-spacing:2px;color:var(--muted);margin-bottom:.4rem}
+.size-opts{display:flex;gap:.4rem;flex-wrap:wrap}
+.sz{background:transparent;border:1px solid rgba(255,255,255,.1);color:var(--muted);padding:.3rem .7rem;cursor:pointer;font-family:'Outfit',sans-serif;font-weight:700;font-size:.8rem;transition:all .2s}
+.sz:hover,.sz.active{border-color:var(--pink);color:var(--pink);background:rgba(255,0,110,.08)}
+.color-opts{display:flex;gap:.6rem;flex-wrap:wrap}
+.cdot{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .2s}
+.cdot:hover,.cdot.active{border-color:var(--pink);transform:scale(1.2);box-shadow:var(--glow-pink)}
+.qty-row{display:flex;align-items:center;gap:.8rem}
+.qbtn{background:transparent;border:1px solid rgba(255,0,110,.25);color:var(--pink);width:32px;height:32px;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.qbtn:hover{background:rgba(255,0,110,.1)}
+.qval{font-family:'Bebas Neue',cursive;font-size:1.3rem;min-width:1.8rem;text-align:center}
+.reviews-divider{border:none;border-top:1px solid rgba(255,0,110,.1);margin:1.5rem 0}
+.reviews-wrap{padding:1.5rem 2rem 2rem}
+.reviews-title{font-family:'Bebas Neue',cursive;letter-spacing:2px;color:var(--pink);margin-bottom:1rem}
+.review-item{background:var(--surface2);border:1px solid rgba(255,0,110,.08);padding:1rem;margin-bottom:.8rem;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))}
+.rv-top{display:flex;justify-content:space-between;margin-bottom:.3rem}
+.rv-name{font-weight:700;font-size:.88rem}
+.rv-date{font-size:.75rem;color:var(--muted)}
+.rv-stars{color:var(--gold);font-size:.8rem;margin-bottom:.4rem}
+.rv-text{font-size:.83rem;color:var(--muted);line-height:1.5}
+
+/* AUTH MODAL */
+.auth-box{max-width:400px;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px))}
+.auth-body{padding:1.8rem}
+.fld{margin-bottom:1rem}
+.fld label{display:block;font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:.35rem}
+.fld input{width:100%;background:var(--surface2);border:1px solid rgba(255,0,110,.18);color:var(--white);padding:.7rem 1rem;font-family:'Outfit',sans-serif;font-size:.9rem;outline:none;transition:border-color .3s}
+.fld input:focus{border-color:var(--pink)}
+.fld input::placeholder{color:var(--muted)}
+.toggle-auth{text-align:center;margin-top:.8rem;color:var(--muted);font-size:.85rem}
+.toggle-auth a{color:var(--cyan);cursor:pointer;font-weight:700}
+
+/* TOAST */
+#toast{position:fixed;bottom:2rem;right:2rem;background:var(--surface2);border:1px solid var(--pink);color:var(--white);padding:.9rem 1.5rem;z-index:9999;box-shadow:var(--glow-pink);clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));transform:translateY(100px);opacity:0;transition:all .4s cubic-bezier(.175,.885,.32,1.275);font-weight:600;font-size:.88rem}
+#toast.show{transform:translateY(0);opacity:1}
+.hidden{display:none!important}
+.ab1{background:linear-gradient(135deg,#0d001a,#3d0060 60%,#ff006e10)}
+.ab2{background:linear-gradient(135deg,#00101a,#002040 60%,#00d4ff10)}
+.ab3{background:linear-gradient(135deg,#0d1000,#1a2d00 60%,#7aff0010)}
+.ab4{background:linear-gradient(135deg,#1a0d00,#3d2000 60%,#ff880010)}
+.ab5{background:linear-gradient(135deg,#0a001a,#1a003d 60%,#aa00ff10)}
+.ab6{background:linear-gradient(135deg,#1a0000,#3d0000 60%,#ff222210)}
+@media(max-width:768px){
+  .nav-links{display:none}
+  .pm-grid{grid-template-columns:1fr}
+  .pm-img-wrap{min-height:220px}
+  .series-grid{grid-template-columns:repeat(2,1fr)}
+  .reviews-wrap{padding:1rem 1.2rem 1.5rem}
+}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="logo" href="web_page.html">WEEB<span>WORLD</span></a>
+    <ul class="nav-links">
+      <li><a href="#" class="active">Collection</a></li>
+      <li><a href="web_page.html#how">How It Works</a></li>
+      <li><a href="web_page.html#about">About</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn btn-ghost" id="loginBtn" onclick="showAuth()">LOGIN</button>
+      <div class="cart-wrap">
+        <button class="btn btn-pink" onclick="goToCart()">🛒 CART</button>
+        <span class="cart-badge" id="cartCount">0</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-label">✦ Anime Apparel</div>
+  <h1 class="page-title" id="pageTitle">THE <span>COLLECTION</span></h1>
+  <p class="page-sub" id="pageSub">Choose your series and explore exclusive designs crafted for true fans.</p>
+  <div class="search-bar">
+    <input class="search-input" id="searchInput" placeholder="Search by anime, design, keyword…" onkeydown="if(event.key==='Enter')doSearch()">
+    <button class="btn btn-pink" onclick="doSearch()">SEARCH</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+  <!-- BACK STRIP -->
+  <div class="back-strip" id="backStrip">
+    <button class="btn btn-ghost" style="font-size:.8rem;padding:.5rem 1rem" onclick="showHome()">← BACK</button>
+    <span class="crumb">Collection / <span id="crumbSeries">—</span></span>
+  </div>
+
+  <!-- FILTER TABS (shown when in product view) -->
+  <div class="filter-bar hidden" id="filterBar">
+    <span style="font-family:'Bebas Neue',cursive;letter-spacing:2px;color:var(--muted);font-size:.85rem">FILTER:</span>
+    <button class="filter-tab active" onclick="filterBy(this,'all')">ALL<span class="filter-count" id="allCount">0</span></button>
+    <button class="filter-tab" onclick="filterBy(this,'top')">TOP RATED</button>
+    <button class="filter-tab" onclick="filterBy(this,'low')">PRICE: LOW</button>
+    <button class="filter-tab" onclick="filterBy(this,'high')">PRICE: HIGH</button>
+  </div>
+
+  <!-- SERIES HOME GRID -->
+  <div class="series-grid" id="seriesGrid"></div>
+
+  <!-- PRODUCTS GRID -->
+  <div class="products-grid" id="productsGrid"></div>
+</main>
+
+<!-- PRODUCT MODAL -->
+<div class="overlay" id="productModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span class="modal-ttl">PRODUCT DETAILS</span>
+      <button class="close-x" onclick="closeModal('productModal')">✕</button>
+    </div>
+    <div class="pm-grid">
+      <div class="pm-img-wrap" id="pmImg"></div>
+      <div class="pm-info">
+        <div>
+          <div class="pm-name" id="pmName">—</div>
+          <div style="display:flex;align-items:center;gap:.4rem">
+            <span class="pm-stars" id="pmStars">★★★★★</span>
+            <span class="pm-rating-count" id="pmCount">(0 reviews)</span>
+          </div>
+          <div class="pm-price" id="pmPrice">$0.00</div>
+          <div class="pm-desc" id="pmDesc">—</div>
+        </div>
+        <div>
+          <div class="opt-label">SIZE</div>
+          <div class="size-opts" style="margin-bottom:1rem">
+            <button class="sz active" onclick="selOpt(this,'size','XS')">XS</button>
+            <button class="sz" onclick="selOpt(this,'size','S')">S</button>
+            <button class="sz" onclick="selOpt(this,'size','M')">M</button>
+            <button class="sz" onclick="selOpt(this,'size','L')">L</button>
+            <button class="sz" onclick="selOpt(this,'size','XL')">XL</button>
+            <button class="sz" onclick="selOpt(this,'size','XXL')">XXL</button>
+          </div>
+          <div class="opt-label">COLOR</div>
+          <div class="color-opts" style="margin-bottom:1rem">
+            <div class="cdot active" style="background:#111" onclick="selOpt(this,'color','Black')" title="Black"></div>
+            <div class="cdot" style="background:#f0e8ff;border:1px solid #555" onclick="selOpt(this,'color','White')" title="White"></div>
+            <div class="cdot" style="background:#1a1a3e" onclick="selOpt(this,'color','Navy')" title="Navy"></div>
+            <div class="cdot" style="background:#3d0000" onclick="selOpt(this,'color','Red')" title="Red"></div>
+          </div>
+          <div class="opt-label">QUANTITY</div>
+          <div class="qty-row" style="margin-bottom:1.2rem">
+            <button class="qbtn" onclick="changeQty(-1)">−</button>
+            <span class="qval" id="qty">1</span>
+            <button class="qbtn" onclick="changeQty(1)">+</button>
+          </div>
+          <button class="btn btn-pink" style="width:100%;font-size:1.05rem" onclick="addToCart()">ADD TO CART</button>
+        </div>
+      </div>
+    </div>
+    <hr class="reviews-divider">
+    <div class="reviews-wrap" id="reviewsWrap"></div>
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="overlay" id="authModal">
+  <div class="modal-box auth-box">
+    <div class="modal-head">
+      <span class="modal-ttl" id="authTitle">LOGIN</span>
+      <button class="close-x" onclick="closeModal('authModal')">✕</button>
+    </div>
+    <div class="auth-body">
+      <div id="loginForm">
+        <div class="fld"><label>Email</label><input type="email" id="loginEmail" placeholder="yourname@email.com"></div>
+        <div class="fld"><label>Password</label><input type="password" id="loginPass" placeholder="••••••••"></div>
+        <button class="btn btn-pink" style="width:100%;margin-top:.5rem" onclick="handleLogin()">SIGN IN</button>
+        <div class="toggle-auth">No account? <a onclick="toggleAuth()">Sign Up</a></div>
+      </div>
+      <div id="signupForm" class="hidden">
+        <div class="fld"><label>Name</label><input type="text" id="signupName" placeholder="Your name"></div>
+        <div class="fld"><label>Email</label><input type="email" id="signupEmail" placeholder="yourname@email.com"></div>
+        <div class="fld"><label>Password</label><input type="password" id="signupPass" placeholder="••••••••"></div>
+        <button class="btn btn-pink" style="width:100%;margin-top:.5rem" onclick="handleSignup()">CREATE ACCOUNT</button>
+        <div class="toggle-auth">Have an account? <a onclick="toggleAuth()">Login</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SERIES=[
+  {key:'naruto',name:'Naruto',kanji:'火',col:'#ff8800',bg:'ab4',count:4,new:true},
+  {key:'aot',name:'Attack on Titan',kanji:'翼',col:'#00d4ff',bg:'ab2',count:3},
+  {key:'onepiece',name:'One Piece',kanji:'海',col:'#00ff88',bg:'ab3',count:5,new:true},
+  {key:'mha',name:'My Hero Academia',kanji:'個',col:'#ff006e',bg:'ab1',count:4},
+  {key:'demonslayer',name:'Demon Slayer',kanji:'水',col:'#aa00ff',bg:'ab5',count:3,new:true},
+  {key:'deathnote',name:'Death Note',kanji:'死',col:'#ff2222',bg:'ab6',count:2},
+];
+
+const PRODUCTS={
+  naruto:[
+    {id:101,name:'Sage Mode Tee',price:24.99,desc:'Naruto's sage eyes across a premium black tee. Subtle and iconic.',rating:5,rc:128,bg:'ab4',kanji:'火',col:'#ff8800'},
+    {id:102,name:'Rasengan Burst',price:22.99,desc:'Swirling energy visualized in minimalist neon print.',rating:4,rc:87,bg:'ab4',kanji:'火',col:'#ff8800'},
+    {id:103,name:'Hokage Pride',price:26.99,desc:'The four Hokage reimagined as abstract silhouettes.',rating:5,rc:204,bg:'ab4',kanji:'火',col:'#ff8800'},
+    {id:104,name:'Kyuubi Seal',price:23.99,desc:'The nine-tails seal pattern from the original series.',rating:4,rc:56,bg:'ab4',kanji:'火',col:'#ff8800'},
+  ],
+  aot:[
+    {id:201,name:'Survey Corps Wings',price:26.99,desc:'Wings of freedom across your chest in bold embroidery-style print.',rating:5,rc:312,bg:'ab2',kanji:'翼',col:'#00d4ff'},
+    {id:202,name:'Colossal Titan',price:28.99,desc:'The moment Eren transforms, captured in explosive artwork.',rating:5,rc:189,bg:'ab2',kanji:'翼',col:'#00d4ff'},
+    {id:203,name:'DEDICATE YOUR HEART',price:24.99,desc:'Levi\'s signature salute immortalised in bold typography.',rating:4,rc:95,bg:'ab2',kanji:'翼',col:'#00d4ff'},
+  ],
+  onepiece:[
+    {id:301,name:'Straw Hat Crew',price:25.99,desc:'All ten Straw Hat Pirates in minimalist line art.',rating:5,rc:267,bg:'ab3',kanji:'海',col:'#00ff88'},
+    {id:302,name:'Gear Fifth',price:27.99,desc:'Luffy's wildest transformation captured in vivid colour.',rating:5,rc:341,bg:'ab3',kanji:'海',col:'#00ff88'},
+    {id:303,name:'Shanks Red Force',price:23.99,desc:'The Red Hair crew\'s jolly roger reimagined.',rating:4,rc:112,bg:'ab3',kanji:'海',col:'#00ff88'},
+    {id:304,name:'Thousand Sunny',price:24.99,desc:'The beloved ship illustrated in detailed ink style.',rating:4,rc:88,bg:'ab3',kanji:'海',col:'#00ff88'},
+    {id:305,name:'One Piece Exists',price:26.99,desc:'The legendary phrase rendered in ancient-map typography.',rating:5,rc:198,bg:'ab3',kanji:'海',col:'#00ff88'},
+  ],
+  mha:[
+    {id:401,name:'Plus Ultra',price:23.99,desc:'All Might\'s iconic phrase in explosive bold type.',rating:5,rc:445,bg:'ab1',kanji:'個',col:'#ff006e'},
+    {id:402,name:'Deku 001',price:22.99,desc:'Midoriya\'s hero costume in sleek outline print.',rating:4,rc:167,bg:'ab1',kanji:'個',col:'#ff006e'},
+    {id:403,name:'League of Villains',price:25.99,desc:'Dark alternative: League of Villains emblem tee.',rating:4,rc:98,bg:'ab1',kanji:'個',col:'#ff006e'},
+    {id:404,name:'One For All Flames',price:24.99,desc:'OFA lightning & flames abstract design.',rating:5,rc:213,bg:'ab1',kanji:'個',col:'#ff006e'},
+  ],
+  demonslayer:[
+    {id:501,name:'Water Breathing',price:27.99,desc:'Water Breathing forms illustrated in flowing ink.',rating:5,rc:389,bg:'ab5',kanji:'水',col:'#aa00ff'},
+    {id:502,name:'Flame Hashira',price:26.99,desc:'Rengoku\'s flame art in warm neon gradients.',rating:5,rc:291,bg:'ab5',kanji:'水',col:'#aa00ff'},
+    {id:503,name:'Nezuko Protect',price:24.99,desc:'Tanjiro and Nezuko silhouette, sunset backdrop.',rating:4,rc:174,bg:'ab5',kanji:'水',col:'#aa00ff'},
+  ],
+  deathnote:[
+    {id:601,name:'The Note',price:26.99,desc:'Death Note cover design, minimal and chilling.',rating:4,rc:143,bg:'ab6',kanji:'死',col:'#ff2222'},
+    {id:602,name:'L vs Kira',price:25.99,desc:'The eternal duel — faces hidden, letters bold.',rating:5,rc:221,bg:'ab6',kanji:'死',col:'#ff2222'},
+  ],
+};
+
+const REVIEWS={
+  101:[{name:'Karan S.',stars:5,date:'Apr 2025',text:'Absolutely perfect. The print quality is amazing — crisp lines and the fabric is super soft.'},
+       {name:'Priya M.',stars:4,date:'Mar 2025',text:'Looks even better in person. Sizing runs true to size.'}],
+  201:[{name:'Arjun T.',stars:5,date:'May 2025',text:'Best Survey Corps tee I\'ve seen. Wearing it to every anime convention!'},
+       {name:'Sania K.',stars:5,date:'Apr 2025',text:'The print doesn\'t crack even after multiple washes. Great quality.'}],
+};
+const DEFAULT_REVIEWS=[{name:'Weeb Fan',stars:5,date:'Apr 2025',text:'Fantastic quality! The print is sharp and the fabric is premium cotton.'}];
+
+let cart=JSON.parse(localStorage.getItem('ww_cart')||'[]');
+let user=JSON.parse(localStorage.getItem('ww_user')||'null');
+let sel=null,opts={size:'XS',color:'Black',qty:1};
+let currentSeries=null,allCurrentProducts=[];
+
+function cardSVG(p){
+  return`<svg viewBox="0 0 300 240" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="cg${p.id}" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="${p.col}" stop-opacity=".3"/><stop offset="100%" stop-color="${p.col}" stop-opacity="0"/></radialGradient></defs><circle cx="150" cy="120" r="100" fill="url(#cg${p.id})"/><text x="150" y="165" text-anchor="middle" font-size="140" font-family="serif" fill="${p.col}" opacity=".07">${p.kanji}</text><g transform="translate(78,40)" fill="${p.col}" opacity=".55"><path d="M0 32 L32 0 L52 16 C76 6 76 6 96 16 L116 0 L148 32 L116 50 L116 140 L32 140 L32 50Z"/></g></svg>`;
+}
+function modalSVG(p){
+  return`<svg viewBox="0 0 400 440" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block"><defs><radialGradient id="mg${p.id}" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="${p.col}" stop-opacity=".35"/><stop offset="100%" stop-color="${p.col}" stop-opacity="0"/></radialGradient></defs><circle cx="200" cy="220" r="180" fill="url(#mg${p.id})"/><text x="200" y="305" text-anchor="middle" font-size="240" font-family="serif" fill="${p.col}" opacity=".07">${p.kanji}</text><g transform="translate(90,70)" fill="${p.col}" opacity=".65"><path d="M0 50 L50 0 L80 25 C120 8 120 8 160 25 L195 0 L220 50 L190 80 L190 240 L50 240 L50 80Z"/></g></svg>`;
+}
+
+function renderSeries(){
+  document.getElementById('seriesGrid').innerHTML=SERIES.map(s=>`
+    <div class="series-card" style="--sc-col:${s.col}20" onclick="showSeries('${s.key}','${s.name}')">
+      ${s.new?'<div class="sc-badge">NEW</div>':''}
+      <div class="sc-kanji" style="color:${s.col}">${s.kanji}</div>
+      <div class="sc-name">${s.name}</div>
+      <div class="sc-count">${s.count} DESIGNS</div>
+    </div>`).join('');
+}
+
+function showSeries(key,name){
+  currentSeries=key;
+  document.getElementById('seriesGrid').classList.add('hidden');
+  document.getElementById('productsGrid').classList.add('show');
+  document.getElementById('backStrip').classList.add('show');
+  document.getElementById('filterBar').classList.remove('hidden');
+  document.getElementById('crumbSeries').textContent=name;
+  document.getElementById('pageTitle').innerHTML=`${name.toUpperCase().replace(/ /g,'&nbsp;')} <span>TEES</span>`;
+  document.getElementById('pageSub').textContent=`Explore our exclusive ${name} collection`;
+  allCurrentProducts=PRODUCTS[key]||[];
+  document.getElementById('allCount').textContent=allCurrentProducts.length;
+  renderProducts(allCurrentProducts);
+}
+
+function filterBy(btn,type){
+  document.querySelectorAll('.filter-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  let list=[...allCurrentProducts];
+  if(type==='top')list.sort((a,b)=>b.rating-a.rating);
+  else if(type==='low')list.sort((a,b)=>a.price-b.price);
+  else if(type==='high')list.sort((a,b)=>b.price-a.price);
+  renderProducts(list);
+}
+
+function renderProducts(list){
+  const grid=document.getElementById('productsGrid');
+  if(!list.length){grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--muted)"><div style="font-size:3rem;margin-bottom:.8rem">🔍</div><div style="font-family:'Bebas Neue',cursive;font-size:1.8rem;letter-spacing:2px">NO PRODUCTS FOUND</div></div>`;return}
+  grid.innerHTML=list.map(p=>`
+    <div class="product-card" onclick="showProduct(${p.id})">
+      <div class="pc-img ${p.bg}">${cardSVG(p)}<div class="pc-badge">ANIME</div><button class="pc-wish" onclick="event.stopPropagation();toggleWish(this,${p.id})">♡</button></div>
+      <div class="pc-body">
+        <div class="pc-name">${p.name}</div>
+        <div class="pc-desc">${p.desc}</div>
+        <div class="pc-footer">
+          <div><div class="pc-price">$${p.price.toFixed(2)}</div><div class="pc-stars">${'★'.repeat(p.rating)}${'☆'.repeat(5-p.rating)} <span style="color:var(--muted);font-size:.7rem">(${p.rc})</span></div></div>
+          <button class="pc-add" onclick="event.stopPropagation();quickAdd(${p.id})">+ ADD</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function doSearch(){
+  const q=document.getElementById('searchInput').value.trim().toLowerCase();
+  if(!q)return toast('⚠ Enter a search term first');
+  let results=[];
+  for(const key in PRODUCTS)results=results.concat(PRODUCTS[key].filter(p=>p.name.toLowerCase().includes(q)||p.desc.toLowerCase().includes(q)||key.includes(q)));
+  document.getElementById('seriesGrid').classList.add('hidden');
+  document.getElementById('productsGrid').classList.add('show');
+  document.getElementById('backStrip').classList.add('show');
+  document.getElementById('filterBar').classList.add('hidden');
+  document.getElementById('crumbSeries').textContent=`Search: "${q}"`;
+  document.getElementById('pageTitle').innerHTML=`SEARCH <span>RESULTS</span>`;
+  document.getElementById('pageSub').textContent=`${results.length} design(s) found for "${q}"`;
+  allCurrentProducts=results;
+  renderProducts(results);
+}
+
+function showHome(){
+  currentSeries=null;
+  document.getElementById('seriesGrid').classList.remove('hidden');
+  document.getElementById('productsGrid').classList.remove('show');
+  document.getElementById('backStrip').classList.remove('show');
+  document.getElementById('filterBar').classList.add('hidden');
+  document.getElementById('pageTitle').innerHTML='THE <span>COLLECTION</span>';
+  document.getElementById('pageSub').textContent='Choose your series and explore exclusive designs crafted for true fans.';
+  document.getElementById('searchInput').value='';
+}
+
+function showProduct(id){
+  let p=null;for(const k in PRODUCTS){p=PRODUCTS[k].find(x=>x.id===id);if(p)break}
+  if(!p)return;sel=p;opts={size:'XS',color:'Black',qty:1};
+  const wrap=document.getElementById('pmImg');
+  wrap.className=`pm-img-wrap ${p.bg}`;
+  wrap.innerHTML=modalSVG(p);
+  document.getElementById('pmName').textContent=p.name;
+  document.getElementById('pmStars').textContent='★'.repeat(p.rating)+'☆'.repeat(5-p.rating);
+  document.getElementById('pmCount').textContent=`(${p.rc} reviews)`;
+  document.getElementById('pmPrice').textContent=`$${p.price.toFixed(2)}`;
+  document.getElementById('pmDesc').textContent=p.desc;
+  document.getElementById('qty').textContent='1';
+  document.querySelectorAll('.sz').forEach((b,i)=>b.classList.toggle('active',i===0));
+  document.querySelectorAll('.cdot').forEach((b,i)=>b.classList.toggle('active',i===0));
+  const rv=REVIEWS[id]||DEFAULT_REVIEWS;
+  document.getElementById('reviewsWrap').innerHTML=`<div class="reviews-title">CUSTOMER REVIEWS (${rv.length})</div>`+rv.map(r=>`<div class="review-item"><div class="rv-top"><span class="rv-name">${r.name}</span><span class="rv-date">${r.date}</span></div><div class="rv-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</div><div class="rv-text">${r.text}</div></div>`).join('');
+  document.getElementById('productModal').classList.add('show');
+}
+
+function selOpt(btn,type,val){document.querySelectorAll(type==='size'?'.sz':'.cdot').forEach(b=>b.classList.remove('active'));btn.classList.add('active');opts[type]=val}
+function changeQty(d){opts.qty=Math.max(1,opts.qty+d);document.getElementById('qty').textContent=opts.qty}
+
+function addToCart(){
+  if(!sel)return;
+  for(let i=0;i<opts.qty;i++)cart.push({...sel,size:opts.size,color:opts.color});
+  saveCart();closeModal('productModal');
+  toast(`✓ ${opts.qty}× ${sel.name} (${opts.size}, ${opts.color}) added!`);
+}
+
+function quickAdd(id){
+  let p=null;for(const k in PRODUCTS){p=PRODUCTS[k].find(x=>x.id===id);if(p)break}
+  if(!p)return;
+  cart.push({...p,size:'M',color:'Black'});
+  saveCart();toast(`✓ ${p.name} added to cart!`);
+}
+
+function toggleWish(btn){btn.classList.toggle('liked');btn.textContent=btn.classList.contains('liked')?'♥':'♡'}
+
+function goToCart(){window.location.href='cart.html'}
+function showAuth(){document.getElementById('authModal').classList.add('show')}
+function toggleAuth(){
+  document.getElementById('loginForm').classList.toggle('hidden');
+  document.getElementById('signupForm').classList.toggle('hidden');
+  document.getElementById('authTitle').textContent=document.getElementById('loginForm').classList.contains('hidden')?'SIGN UP':'LOGIN';
+}
+function handleLogin(){
+  const e=document.getElementById('loginEmail').value,p=document.getElementById('loginPass').value;
+  if(!e||!p)return toast('⚠ Fill all fields');
+  user={email:e,name:e.split('@')[0]};localStorage.setItem('ww_user',JSON.stringify(user));
+  document.getElementById('loginBtn').textContent=`👤 ${user.name.toUpperCase()}`;
+  closeModal('authModal');toast(`✓ Welcome back, ${user.name}!`);
+}
+function handleSignup(){
+  const n=document.getElementById('signupName').value,e=document.getElementById('signupEmail').value,p=document.getElementById('signupPass').value;
+  if(!n||!e||!p)return toast('⚠ Fill all fields');
+  user={name:n,email:e};localStorage.setItem('ww_user',JSON.stringify(user));
+  document.getElementById('loginBtn').textContent=`👤 ${n.toUpperCase()}`;
+  closeModal('authModal');toast(`✓ Welcome to WeebWorld, ${n}!`);
+}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+window.onclick=e=>{if(e.target.classList.contains('overlay'))e.target.classList.remove('show')}
+function saveCart(){localStorage.setItem('ww_cart',JSON.stringify(cart));document.getElementById('cartCount').textContent=cart.length}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500)}
+
+renderSeries();
+document.getElementById('cartCount').textContent=cart.length;
+if(user)document.getElementById('loginBtn').textContent=`👤 ${user.name.toUpperCase()}`;
+</script>
+</body>
+</html>
